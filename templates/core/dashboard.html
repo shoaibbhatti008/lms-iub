@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <!-- WELCOME CARD -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="dashboard-card text-center" style="background: linear-gradient(135deg, #4361ee, #3f37c9); color: white;">
+                <h1 class="display-4">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+                <p class="lead">Role: {{ user.get_role_display }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ============================================ -->
+    <!-- ADMIN DASHBOARD -->
+    <!-- ============================================ -->
+    {% if user.role == 'admin' %}
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-primary bg-opacity-10 mx-auto">
+                    <i class="fas fa-users text-primary"></i>
+                </div>
+                <h3 class="stat-number">{{ total_students }}</h3>
+                <p class="text-muted mb-0">Total Students</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-success bg-opacity-10 mx-auto">
+                    <i class="fas fa-chalkboard-user text-success"></i>
+                </div>
+                <h3 class="stat-number">{{ total_teachers }}</h3>
+                <p class="text-muted mb-0">Total Teachers</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-info bg-opacity-10 mx-auto">
+                    <i class="fas fa-book text-info"></i>
+                </div>
+                <h3 class="stat-number">{{ total_courses }}</h3>
+                <p class="text-muted mb-0">Total Courses</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-warning bg-opacity-10 mx-auto">
+                    <i class="fas fa-tasks text-warning"></i>
+                </div>
+                <h3 class="stat-number">{{ total_assignments }}</h3>
+                <p class="text-muted mb-0">Total Assignments</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-users me-2"></i>Recent Users</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for user in recent_users %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                <br>
+                                <small class="text-muted">{{ user.get_role_display }}</small>
+                            </div>
+                            <span class="badge bg-secondary">{{ user.date_joined|date:"M d, Y" }}</span>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">No users found.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-book me-2"></i>Recent Courses</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for course in recent_courses %}
+                        <div class="list-group-item">
+                            <strong>{{ course.title }}</strong>
+                            <br>
+                            <small class="text-muted">Code: {{ course.course_code }} | Teacher: {{ course.teacher.get_full_name|default:course.teacher.username }}</small>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">No courses found.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ============================================ -->
+    <!-- TEACHER DASHBOARD -->
+    <!-- ============================================ -->
+    {% if user.role == 'teacher' %}
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-primary bg-opacity-10 mx-auto">
+                    <i class="fas fa-book text-primary"></i>
+                </div>
+                <h3 class="stat-number">{{ courses_count }}</h3>
+                <p class="text-muted mb-0">My Courses</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-success bg-opacity-10 mx-auto">
+                    <i class="fas fa-tasks text-success"></i>
+                </div>
+                <h3 class="stat-number">{{ assignments_count }}</h3>
+                <p class="text-muted mb-0">Total Assignments</p>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-warning bg-opacity-10 mx-auto">
+                    <i class="fas fa-clock text-warning"></i>
+                </div>
+                <h3 class="stat-number">{{ pending_submissions }}</h3>
+                <p class="text-muted mb-0">Pending Submissions</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header bg-white">
+            <h5 class="mb-0"><i class="fas fa-chalkboard me-2"></i>My Courses</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for course in courses %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <p class="card-text text-muted">{{ course.description|truncatewords:20 }}</p>
+                            <p><strong>Code:</strong> {{ course.course_code }}</p>
+                            <p><strong>Students:</strong> {{ course.get_enrollment_count }}</p>
+                            <a href="{% url 'course_detail' course.id %}" class="btn btn-primary btn-sm">Manage Course</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-muted text-center">No courses assigned yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ============================================ -->
+    <!-- STUDENT DASHBOARD - COMPLETE -->
+    <!-- ============================================ %}
+    {% if user.role == 'student' %}
+    
+    <!-- STATISTICS CARDS -->
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-primary bg-opacity-10 mx-auto">
+                    <i class="fas fa-book text-primary"></i>
+                </div>
+                <h3 class="stat-number">{{ courses_count }}</h3>
+                <p class="text-muted mb-0">Enrolled Courses</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-info bg-opacity-10 mx-auto">
+                    <i class="fas fa-tasks text-info"></i>
+                </div>
+                <h3 class="stat-number">{{ assignments_count }}</h3>
+                <p class="text-muted mb-0">Total Assignments</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-success bg-opacity-10 mx-auto">
+                    <i class="fas fa-check-circle text-success"></i>
+                </div>
+                <h3 class="stat-number">{{ total_submitted }}</h3>
+                <p class="text-muted mb-0">Submitted</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="dashboard-card text-center">
+                <div class="dashboard-icon bg-warning bg-opacity-10 mx-auto">
+                    <i class="fas fa-hourglass-half text-warning"></i>
+                </div>
+                <h3 class="stat-number">{{ pending_assignments }}</h3>
+                <p class="text-muted mb-0">Pending</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PENDING ASSIGNMENTS SECTION -->
+    {% if pending_assignments_list %}
+    <div class="card mb-4 border-warning">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>⚠️ Pending Assignments (Need Submission)</h5>
+        </div>
+        <div class="card-body">
+            {% for assignment in pending_assignments_list %}
+            <div class="alert alert-warning mb-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h6 class="mb-1">{{ assignment.title }}</h6>
+                        <small>Course: {{ assignment.course.title }}</small><br>
+                        <small class="text-danger">Deadline: {{ assignment.deadline|date:"M d, Y H:i" }}</small>
+                    </div>
+                    <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-primary btn-sm mt-2 mt-sm-0">
+                        <i class="fas fa-upload me-1"></i>Submit Now
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- GRADED ASSIGNMENTS SECTION -->
+    {% if graded_assignments %}
+    <div class="card mb-4 border-success">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="fas fa-star me-2"></i>Graded Assignments</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Course</th>
+                            <th>Marks Obtained</th>
+                            <th>Max Marks</th>
+                            <th>Percentage</th>
+                            <th>Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for graded in graded_assignments %}
+                        <tr>
+                            <td>{{ graded.assignment.title }}</td>
+                            <td>{{ graded.assignment.course.title }}</td>
+                            <td class="fw-bold">{{ graded.marks }}</td>
+                            <td>{{ graded.max_marks }}</td>
+                            <td>
+                                {% widthratio graded.marks graded.max_marks 100 %}%
+                                <div class="progress mt-1" style="height: 5px;">
+                                    <div class="progress-bar bg-success" style="width: {% widthratio graded.marks graded.max_marks 100 %}%"></div>
+                                </div>
+                            </td>
+                            <td>{{ graded.feedback|default:"-" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ENROLLED COURSES SECTION -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-book-open me-2"></i>My Enrolled Courses</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for course in enrolled_courses %}
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ course.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ course.course_code }}</h6>
+                            <p class="card-text small">{{ course.description|truncatewords:15 }}</p>
+                            <p class="mb-1">
+                                <i class="fas fa-chalkboard-user me-1"></i>
+                                <small>{{ course.teacher.get_full_name|default:course.teacher.username }}</small>
+                            </p>
+                            <p>
+                                <i class="fas fa-tasks me-1"></i>
+                                <small>Assignments: {{ course.assignments.count }}</small>
+                            </p>
+                            <a href="{% url 'course_detail' course.id %}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-eye me-1"></i>View Course
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>
+                        You are not enrolled in any courses yet.
+                        <br>
+                        <small>Contact your admin to enroll you in courses.</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    {% endif %}
+</div>
+{% endblock %}

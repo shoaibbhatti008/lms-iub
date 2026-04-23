@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4"><i class="fas fa-bullhorn me-2"></i>All Announcements</h1>
+    
+    {% if announcements %}
+        {% for announcement in announcements %}
+        <div class="card mb-3 
+            {% if announcement.priority == 'urgent' %}border-danger
+            {% elif announcement.priority == 'important' %}border-warning
+            {% else %}border-info{% endif %}">
+            
+            <div class="card-header 
+                {% if announcement.priority == 'urgent' %}bg-danger text-white
+                {% elif announcement.priority == 'important' %}bg-warning
+                {% else %}bg-info text-white{% endif %}">
+                
+                <h6 class="mb-0">
+                    {% if announcement.priority == 'urgent' %}🔥
+                    {% elif announcement.priority == 'important' %}⚠️
+                    {% else %}📢{% endif %}
+                    {{ announcement.title }}
+                </h6>
+                <small>
+                    Course: <strong>{{ announcement.course.title }}</strong>
+                    | By: {{ announcement.created_by.username }}
+                    | {{ announcement.created_at|date:"M d, Y H:i" }}
+                </small>
+            </div>
+            
+            <div class="card-body">
+                <p>{{ announcement.content|linebreaks }}</p>
+                {% if announcement.attachment %}
+                <a href="{{ announcement.attachment.url }}" class="btn btn-sm btn-outline-primary" download>
+                    <i class="fas fa-download me-1"></i>Download Attachment
+                </a>
+                {% endif %}
+                <hr>
+                <a href="{% url 'course_detail' announcement.course.id %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-eye me-1"></i>View Course
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info text-center">
+            No announcements available.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

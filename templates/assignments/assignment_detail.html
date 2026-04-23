@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <!-- Assignment Header -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-0">{{ assignment.title }}</h3>
+                    <p class="mb-0">{{ assignment.course.title }}</p>
+                </div>
+                {% if user.role == 'admin' or assignment.created_by == user %}
+                <a href="{% url 'delete_assignment' assignment.id %}" 
+                   class="btn btn-danger" 
+                   onclick="return confirm('Delete this assignment permanently?')">
+                    <i class="fas fa-trash me-1"></i>Delete Assignment
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <p>{{ assignment.description }}</p>
+            <hr>
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>📅 Deadline:</strong> 
+                        <span class="text-danger">{{ assignment.deadline|date:"M d, Y H:i" }}</span>
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>⭐ Max Marks:</strong> {{ assignment.max_marks }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>👨‍🏫 Teacher:</strong> {{ assignment.created_by.username }}</p>
+                </div>
+            </div>
+            
+            {% if assignment.attachment %}
+            <div class="alert alert-info">
+                <i class="fas fa-paperclip me-2"></i>
+                <strong>Teacher's Attachment:</strong>
+                <a href="{{ assignment.attachment.url }}" class="btn btn-sm btn-primary" download>
+                    <i class="fas fa-download me-1"></i>Download
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Student View -->
+    {% if user.role == 'student' %}
+        {% if submission %}
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Your Submission</h5>
+            </div>
+            <div class="card-body">
+                {% if submission.answer_text %}
+                <div class="mb-3">
+                    <strong>Your Answer:</strong>
+                    <div class="border rounded p-3 bg-light mt-2">
+                        {{ submission.answer_text|linebreaks }}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if submission.answer_file %}
+                <div class="mb-3">
+                    <strong>Your File:</strong>
+                    <div class="mt-2">
+                        <a href="{{ submission.answer_file.url }}" class="btn btn-outline-primary" download>
+                            <i class="fas fa-download me-1"></i>Download Your Answer File
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <hr>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Submitted on:</strong> {{ submission.submitted_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        {% if submission.is_late %}
+                        <p class="text-danger"><strong>Status:</strong> Late Submission</p>
+                        {% else %}
+                        <p class="text-success"><strong>Status:</strong> On Time</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if submission.marks %}
+                <div class="alert alert-info">
+                    <h6>Results:</h6>
+                    <p><strong>Marks Obtained:</strong> {{ submission.marks }}/{{ assignment.max_marks }}</p>
+                    <p><strong>Percentage:</strong> {% widthratio submission.marks assignment.max_marks 100 %}%</p>
+                    <p><strong>Feedback:</strong> {{ submission.feedback }}</p>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-clock me-2"></i>
+                    Not graded yet. Please wait for teacher's feedback.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+            {% if assignment.is_deadline_passed %}
+            <div class="alert alert-danger text-center">
+                <i class="fas fa-times-circle me-2"></i>
+                Submission deadline has passed! You cannot submit now.
+            </div>
+            {% else %}
+            <div class="text-center mb-4">
+                <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-success btn-lg">
+                    <i class="fas fa-upload me-2"></i>Submit Assignment
+                </a>
+            </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    
+    <!-- Teacher View -->
+    {% if user.role == 'teacher' or user.role == 'admin' %}
+    <div class="card mt-4">
+        <div class="card-header bg-warning">
+            <h5 class="mb-0"><i class="fas fa-users me-2"></i>Student Submissions ({{ submissions.count }})</h5>
+        </div>
+        <div class="card-body">
+            {% if submissions %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Submitted At</th>
+                            <th>Status</th>
+                            <th>Answer</th>
+                            <th>Marks</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in submissions %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <strong>{{ sub.student.username }}</strong><br>
+                                <small>{{ sub.student.email }}</small>
+                            </td>
+                            <td>{{ sub.submitted_at|date:"M d, Y H:i" }}<br>
+                                {% if sub.is_late %}
+                                <span class="badge bg-danger">Late</span>
+                                {% else %}
+                                <span class="badge bg-success">On Time</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if sub.answer_text %}
+                                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#answerModal{{ sub.id }}">
+                                    <i class="fas fa-eye me-1"></i>View Text
+                                </button>
+                                <!-- Modal -->
+                                <div class="modal fade" id="answerModal{{ sub.id }}" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-info text-white">
+                                                <h5 class="modal-title">{{ sub.student.username }}'s Answer</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {{ sub.answer_text|linebreaks }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                             </td>
+                            <td>
+                                {% if sub.answer_file %}
+                                <a href="{{ sub.answer_file.url }}" class="btn btn-sm btn-outline-primary" download>
+                                    <i class="fas fa-download me-1"></i>File
+                                </a>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                             </td>
+                            <td>
+                                {% if sub.marks %}
+                                <span class="badge bg-success">{{ sub.marks }}/{{ assignment.max_marks }}</span>
+                                {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                             </td>
+                            <td>
+                                <a href="{% url 'grade_submission' sub.id %}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit me-1"></i>
+                                    {% if sub.marks %}Edit Grade{% else %}Grade{% endif %}
+                                </a>
+                             </td>
+                         </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle me-2"></i>
+                No submissions yet.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

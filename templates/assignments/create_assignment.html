@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus me-2"></i>Create New Assignment</h4>
+                    <small>Course: {{ course.title }}</small>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Assignment Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control" required placeholder="e.g., Assignment 1: Python Basics">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea name="description" class="form-control" rows="5" required placeholder="Describe what students need to do..."></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Deadline <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" name="deadline" class="form-control" required>
+                                    <small class="text-muted">Students cannot submit after this time</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Maximum Marks <span class="text-danger">*</span></label>
+                                    <input type="number" name="max_marks" class="form-control" value="100" required min="1">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Attach File (Optional)</label>
+                            <input type="file" name="attachment" class="form-control">
+                            <small class="text-muted">You can attach assignment PDF, instructions, or reference material</small>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Once created, students will be able to submit this assignment until the deadline.
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-2"></i>Create Assignment
+                        </button>
+                        <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

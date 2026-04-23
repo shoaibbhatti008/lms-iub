@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Upload Content for {{ course.title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content Type</label>
+                            <select name="content_type" class="form-control" id="contentType" required>
+                                <option value="file">File</option>
+                                <option value="link">Link</option>
+                                <option value="text">Text</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="fileDiv">
+                            <label class="form-label">File</label>
+                            <input type="file" name="file" class="form-control">
+                        </div>
+                        <div class="mb-3" id="linkDiv" style="display: none;">
+                            <label class="form-label">URL</label>
+                            <input type="url" name="link_url" class="form-control">
+                        </div>
+                        <div class="mb-3" id="textDiv" style="display: none;">
+                            <label class="form-label">Text Content</label>
+                            <textarea name="text_content" class="form-control" rows="5"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                        <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('contentType').addEventListener('change', function() {
+        var type = this.value;
+        document.getElementById('fileDiv').style.display = type === 'file' ? 'block' : 'none';
+        document.getElementById('linkDiv').style.display = type === 'link' ? 'block' : 'none';
+        document.getElementById('textDiv').style.display = type === 'text' ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
