@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+    
+    <div class="d-flex justify-content-between mb-4">
+        <h1 class="fw-bold">Attendance - {{ live_class.title }}</h1>
+        <button onclick="window.print()" class="btn btn-outline">Print</button>
+    </div>
+    
+    <div class="row g-4 mb-4">
+        <div class="col-md-4"><div class="stat-card"><div class="stat-number">{{ total_students }}</div><div class="stat-label">Total</div></div></div>
+        <div class="col-md-4"><div class="stat-card"><div class="stat-number">{{ present_count }}</div><div class="stat-label">Present</div></div></div>
+        <div class="col-md-4"><div class="stat-card"><div class="stat-number">{{ attendance_percentage }}%</div><div class="stat-label">Rate</div></div></div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">Student Attendance</div>
+        <div class="card-body p-0">
+            <table class="table table-bordered">
+                <thead><tr><th>#</th><th>Student</th><th>Email</th><th>Joined At</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for data in attendance_data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><strong>{{ data.student_name }}</strong></td>
+                        <td>{{ data.student_email }}</td>
+                        <td>{% if data.joined_at %}{{ data.joined_at|date:"M d, Y H:i:s" }}{% else %}-{% endif %}</td>
+                        <td>{% if data.is_present %}<span class="badge bg-success">Present</span>{% else %}<span class="badge bg-danger">Absent</span>{% endif %}</td>
+                    </tr>
+                    {% empty %}<tr><td colspan="5" class="text-center">No records</td></tr>{% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

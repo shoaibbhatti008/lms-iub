@@ -2,71 +2,81 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Course</a>
+    
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1><i class="fas fa-bullhorn me-2"></i>Announcements - {{ course.title }}</h1>
-        <div>
-            <a href="{% url 'course_detail' course.id %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back
-            </a>
-            {% if user.role == 'teacher' or user.role == 'admin' %}
-            <a href="{% url 'create_announcement' course.id %}" class="btn btn-info">
-                <i class="fas fa-plus me-2"></i>New Announcement
-            </a>
-            {% endif %}
-        </div>
+        <h1 class="fw-bold"><i class="fas fa-bullhorn me-2" style="color: #f59e0b;"></i> Announcements - {{ course.title }}</h1>
+        
+        {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+        <a href="{% url 'create_announcement' course.id %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> Post Announcement
+        </a>
+        {% endif %}
     </div>
     
-    {% if announcements %}
-        {% for announcement in announcements %}
-        <div class="card mb-3 
-            {% if announcement.priority == 'urgent' %}border-danger
-            {% elif announcement.priority == 'important' %}border-warning
-            {% else %}border-info{% endif %}">
-            
-            <div class="card-header 
-                {% if announcement.priority == 'urgent' %}bg-danger text-white
-                {% elif announcement.priority == 'important' %}bg-warning
-                {% else %}bg-info text-white{% endif %}">
-                
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="mb-0">
-                            {% if announcement.priority == 'urgent' %}🔥
-                            {% elif announcement.priority == 'important' %}⚠️
-                            {% else %}📢{% endif %}
-                            {{ announcement.title }}
-                        </h6>
-                        <small>Posted by: {{ announcement.created_by.username }} | {{ announcement.created_at|date:"M d, Y H:i" }}</small>
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            {% if announcements %}
+                {% for announcement in announcements %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header {% if announcement.priority == 'urgent' %}bg-danger text-white{% elif announcement.priority == 'important' %}bg-warning text-dark{% else %}bg-primary text-white{% endif %} d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h5 class="mb-1">
+                                {% if announcement.priority == 'urgent' %}
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                {% elif announcement.priority == 'important' %}
+                                    <i class="fas fa-flag me-2"></i>
+                                {% else %}
+                                    <i class="fas fa-bullhorn me-2"></i>
+                                {% endif %}
+                                {{ announcement.title }}
+                            </h5>
+                            <small class="{% if announcement.priority == 'important' %}text-dark{% else %}text-white-50{% endif %}">
+                                <i class="fas fa-user me-1"></i> {{ announcement.created_by.username }}
+                                <i class="fas fa-clock ms-2 me-1"></i> {{ announcement.created_at|date:"M d, Y H:i" }}
+                            </small>
+                        </div>
+                        <div class="d-flex gap-2 mt-2 mt-sm-0">
+                            <span class="badge {% if announcement.priority == 'urgent' %}bg-light text-danger{% elif announcement.priority == 'important' %}bg-dark text-warning{% else %}bg-light text-primary{% endif %}">
+                                {{ announcement.get_priority_display }}
+                            </span>
+                            {% if user.role == 'admin' or announcement.created_by == user %}
+                            <form method="post" action="{% url 'delete_announcement' announcement.id %}" style="display: inline;" onsubmit="return confirm('Delete this announcement?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash-alt me-1"></i> Delete
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
                     </div>
-                    
-                    {% if user.role == 'admin' or announcement.created_by == user %}
-                    <a href="{% url 'delete_announcement' announcement.id %}" 
-                       class="btn btn-sm btn-danger"
-                       onclick="return confirm('Delete this announcement?')">
-                        <i class="fas fa-trash"></i>
+                    <div class="card-body">
+                        <p>{{ announcement.content|linebreaks }}</p>
+                        {% if announcement.attachment %}
+                        <a href="{{ announcement.attachment.url }}" class="btn btn-sm btn-outline-primary" download>
+                            <i class="fas fa-download me-1"></i> Download Attachment
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-transparent text-muted small">
+                        <i class="fas fa-edit me-1"></i> Last updated: {{ announcement.updated_at|date:"M d, Y H:i" }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info text-center py-5">
+                    <i class="fas fa-bullhorn fa-3x mb-3 d-block"></i>
+                    <h5>No Announcements Yet</h5>
+                    <p>No announcements have been posted for this course yet.</p>
+                    {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+                    <a href="{% url 'create_announcement' course.id %}" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus me-2"></i> Post First Announcement
                     </a>
                     {% endif %}
                 </div>
-            </div>
-            
-            <div class="card-body">
-                <p>{{ announcement.content|linebreaks }}</p>
-                {% if announcement.attachment %}
-                <a href="{{ announcement.attachment.url }}" class="btn btn-sm btn-outline-primary" download>
-                    <i class="fas fa-paperclip me-1"></i>Download Attachment
-                </a>
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="alert alert-info text-center">
-            No announcements yet.
-            {% if user.role == 'teacher' or user.role == 'admin' %}
-            <br><a href="{% url 'create_announcement' course.id %}" class="btn btn-info mt-2">Create First Announcement</a>
             {% endif %}
         </div>
-    {% endif %}
+    </div>
 </div>
 {% endblock %}

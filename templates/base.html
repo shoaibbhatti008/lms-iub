@@ -3,183 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMS - Learning Management System</title>
+    <title>IUB LMS - Learning Management System</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --success-color: #4cc9f0;
-            --danger-color: #f72585;
-            --warning-color: #f8961e;
-            --dark-color: #2b2d42;
-            --light-color: #f8f9fa;
+            --primary: #4f46e5;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
         }
         
         .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 0;
+            background: white;
+            padding: 0.7rem 0;
+            box-shadow: var(--shadow);
+            border-bottom: 1px solid var(--border);
         }
         
         .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white !important;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary) !important;
         }
+        
+        .navbar-brand i { margin-right: 6px; }
         
         .nav-link {
-            color: rgba(255,255,255,0.9) !important;
-            transition: all 0.3s ease;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
         }
         
-        .nav-link:hover {
+        .nav-link:hover { color: var(--primary); }
+        .nav-link i { margin-right: 6px; }
+        
+        /* AI Assistant Nav Link - Highlight */
+        .nav-link.ai-link {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white !important;
-            transform: translateY(-2px);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            margin: 0 5px;
         }
         
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            overflow: hidden;
+        .nav-link.ai-link i { margin-right: 5px; }
+        .nav-link.ai-link:hover { background: linear-gradient(135deg, #4338ca, #6d28d9); transform: translateY(-1px); }
+        
+        .navbar-toggler { border: none; }
+        .navbar-toggler-icon { font-size: 1.2rem; color: var(--text-dark); }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 15px;
+            padding-left: 15px;
+            border-left: 1px solid var(--border);
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            padding: 10px 25px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(67,97,238,0.3);
-        }
-        
-        .alert {
-            border-radius: 10px;
-            border: none;
-        }
-        
-        footer {
-            background: var(--dark-color);
-            color: white;
-            padding: 2rem 0;
-            margin-top: 3rem;
-        }
-        
-        .dashboard-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-        
-        .dashboard-icon {
-            width: 60px;
-            height: 60px;
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .user-name { font-size: 0.8rem; font-weight: 500; color: var(--text-dark); }
+        .user-role { font-size: 0.65rem; color: var(--text-muted); }
+        
+        @media (max-width: 991px) {
+            .user-menu {
+                margin: 15px 0 0;
+                padding: 12px 0 0;
+                border-left: none;
+                border-top: 1px solid var(--border);
+                justify-content: center;
+            }
+            .nav-link { text-align: center; }
+            .nav-link.ai-link { display: inline-block; width: auto; margin: 5px auto; }
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            background: white;
+        }
+        
+        .card-header {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            font-weight: 600;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: #eef2ff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.8rem auto;
+        }
+        
+        .stat-icon i { font-size: 1.3rem; color: var(--primary); }
+        .stat-number { font-size: 1.5rem; font-weight: 700; color: var(--text-dark); }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary), #4338ca);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+        
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        
+        .footer {
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 2rem 0 1rem;
+            margin-top: 3rem;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-decoration: none;
             margin-bottom: 1rem;
         }
         
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
+        .back-btn:hover { color: var(--primary); }
         
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        
+        @media (max-width: 768px) {
+            .stat-number { font-size: 1.2rem; }
+            .welcome-card { padding: 1rem; }
         }
     </style>
 </head>
 <body>
     {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{% url 'dashboard' %}">
-                <i class="fas fa-graduation-cap me-2"></i>LMS Portal
+                <i class="fas fa-graduation-cap"></i> IUB LMS
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"><i class="fas fa-bars"></i></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard' %}">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'course_list' %}">
-                            <i class="fas fa-book"></i> Courses
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'assignment_list' %}">
-                            <i class="fas fa-tasks"></i> Assignments
-                        </a>
-                    </li>
-                    <!-- ANNOUNCEMENTS NAV LINK - ADDED -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'announcements' %}">
-                            <i class="fas fa-bullhorn"></i> Announcements
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">
-                            <i class="fas fa-user"></i> Profile
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'course_list' %}"><i class="fas fa-book"></i> Courses</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'assignment_list' %}"><i class="fas fa-tasks"></i> Assignments</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'lecture_list_all' %}"><i class="fas fa-video"></i> Lectures</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'live_class_list_all' %}"><i class="fas fa-chalkboard"></i> Live Classes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'announcements' %}"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
+                <div class="user-menu">
+                    <div class="user-avatar">{{ user.username|first|upper }}</div>
+                    <div>
+                        <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                        <div class="user-role">{{ user.get_role_display }}</div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
     {% endif %}
     
-    <div class="container mt-4 fade-in">
+    <main class="container fade-in mt-3">
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -192,25 +252,512 @@
         
         {% block content %}
         {% endblock %}
-    </div>
+    </main>
     
-    <footer>
+    <footer class="footer">
         <div class="container text-center">
-            <p>&copy; 2025 Learning Management System. All rights reserved.</p>
-            <p class="mb-0">Empowering Education Through Technology</p>
+            <p class="small text-muted mb-0">&copy; 2025 Islamia University of Bahawalpur</p>
         </div>
     </footer>
     
+    <!-- Floating AI Chatbot Widget -->
+    {% if user.is_authenticated %}
+    <div id="ai-chatbot-root"></div>
+    {% endif %}
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Auto-hide alerts after 5 seconds
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.alert');
-            alerts.forEach(function(alert) {
-                var bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                new bootstrap.Alert(alert).close();
             });
-        }, 5000);
+        }, 4000);
     </script>
+    
+    <!-- AI Chatbot Script -->
+    {% if user.is_authenticated %}
+    <script>
+        (function() {
+            // Create container for chatbot
+            const container = document.getElementById('ai-chatbot-root');
+            if (!container) return;
+            
+            // Inject chatbot HTML
+            container.innerHTML = `
+            <div id="ai-chat-widget">
+                <div id="chat-toggle" class="chat-toggle-btn">
+                    <i class="fas fa-comment-dots"></i>
+                    <span class="chat-status-dot"></span>
+                </div>
+                
+                <div id="chat-window" class="chat-window hidden">
+                    <div class="chat-header">
+                        <div class="chat-header-info">
+                            <i class="fas fa-robot"></i>
+                            <div>
+                                <strong>AI Study Assistant</strong>
+                                <small>Powered by Gemini AI</small>
+                            </div>
+                        </div>
+                        <div class="chat-actions">
+                            <button id="chat-clear-btn" class="chat-icon-btn" title="New Chat"><i class="fas fa-trash-alt"></i></button>
+                            <button id="chat-close-btn" class="chat-icon-btn" title="Close"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="msg bot-msg">
+                            <div class="msg-content">👋 Hi! I'm your AI Study Assistant. Ask me anything about your courses, assignments, or study tips!</div>
+                            <div class="msg-time">Just now</div>
+                        </div>
+                    </div>
+                    
+                    <div id="chat-typing" class="chat-typing hidden">
+                        <span></span><span></span><span></span>
+                    </div>
+                    
+                    <div class="chat-input-area">
+                        <div class="suggestions">
+                            <button class="suggestion-chip">📚 My Courses</button>
+                            <button class="suggestion-chip">📝 Pending Work</button>
+                            <button class="suggestion-chip">💡 Study Tips</button>
+                            <button class="suggestion-chip">📅 Deadlines</button>
+                        </div>
+                        <div class="input-wrapper">
+                            <input type="text" id="chat-input" placeholder="Type your message..." class="chat-input-field">
+                            <button id="chat-send" class="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <style>
+                #ai-chat-widget {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    z-index: 99999;
+                    font-family: 'Inter', sans-serif;
+                }
+                
+                .chat-toggle-btn {
+                    width: 55px;
+                    height: 55px;
+                    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+                    transition: all 0.3s ease;
+                    position: relative;
+                }
+                
+                .chat-toggle-btn:hover {
+                    transform: scale(1.08);
+                    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+                }
+                
+                .chat-toggle-btn i {
+                    color: white;
+                    font-size: 24px;
+                }
+                
+                .chat-status-dot {
+                    position: absolute;
+                    bottom: 3px;
+                    right: 5px;
+                    width: 12px;
+                    height: 12px;
+                    background: #10b981;
+                    border-radius: 50%;
+                    border: 2px solid white;
+                }
+                
+                .chat-window {
+                    position: absolute;
+                    bottom: 70px;
+                    right: 0;
+                    width: 380px;
+                    height: 520px;
+                    background: white;
+                    border-radius: 20px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                }
+                
+                .chat-window.hidden {
+                    display: none;
+                }
+                
+                .chat-header {
+                    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                    color: white;
+                    padding: 12px 16px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                
+                .chat-header-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                
+                .chat-header-info i {
+                    font-size: 28px;
+                }
+                
+                .chat-header-info small {
+                    font-size: 10px;
+                    opacity: 0.85;
+                    display: block;
+                }
+                
+                .chat-actions {
+                    display: flex;
+                    gap: 8px;
+                }
+                
+                .chat-icon-btn {
+                    background: rgba(255,255,255,0.2);
+                    border: none;
+                    color: white;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                
+                .chat-icon-btn:hover {
+                    background: rgba(255,255,255,0.3);
+                }
+                
+                .chat-messages {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 15px;
+                    background: #f8fafc;
+                }
+                
+                .msg {
+                    margin-bottom: 15px;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .user-msg {
+                    align-items: flex-end;
+                }
+                
+                .bot-msg {
+                    align-items: flex-start;
+                }
+                
+                .msg-content {
+                    max-width: 85%;
+                    padding: 10px 14px;
+                    border-radius: 18px;
+                    font-size: 13px;
+                    line-height: 1.4;
+                    white-space: pre-wrap;
+                    word-wrap: break-word;
+                }
+                
+                .user-msg .msg-content {
+                    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                    color: white;
+                    border-bottom-right-radius: 5px;
+                }
+                
+                .bot-msg .msg-content {
+                    background: white;
+                    color: #1e293b;
+                    border-bottom-left-radius: 5px;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+                }
+                
+                .msg-time {
+                    font-size: 9px;
+                    color: #94a3b8;
+                    margin-top: 4px;
+                    padding: 0 5px;
+                }
+                
+                .chat-typing {
+                    padding: 10px 15px;
+                    display: flex;
+                    gap: 4px;
+                }
+                
+                .chat-typing span {
+                    width: 8px;
+                    height: 8px;
+                    background: #94a3b8;
+                    border-radius: 50%;
+                    animation: typingAnim 1.4s infinite;
+                }
+                
+                .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+                .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+                
+                @keyframes typingAnim {
+                    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+                    30% { transform: translateY(-8px); opacity: 1; }
+                }
+                
+                .chat-typing.hidden {
+                    display: none;
+                }
+                
+                .chat-input-area {
+                    padding: 12px;
+                    background: white;
+                    border-top: 1px solid #e2e8f0;
+                }
+                
+                .suggestions {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    margin-bottom: 10px;
+                }
+                
+                .suggestion-chip {
+                    background: #f1f5f9;
+                    border: none;
+                    padding: 4px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    color: #4f46e5;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                
+                .suggestion-chip:hover {
+                    background: #e0e7ff;
+                }
+                
+                .input-wrapper {
+                    display: flex;
+                    gap: 8px;
+                }
+                
+                .chat-input-field {
+                    flex: 1;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 25px;
+                    padding: 10px 15px;
+                    font-size: 13px;
+                    outline: none;
+                    font-family: 'Inter', sans-serif;
+                }
+                
+                .chat-input-field:focus {
+                    border-color: #4f46e5;
+                }
+                
+                .chat-send-btn {
+                    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+                    border: none;
+                    border-radius: 50%;
+                    width: 38px;
+                    height: 38px;
+                    color: white;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                
+                .chat-send-btn:hover {
+                    transform: scale(1.05);
+                }
+                
+                .chat-messages::-webkit-scrollbar {
+                    width: 4px;
+                }
+                
+                .chat-messages::-webkit-scrollbar-track {
+                    background: #e2e8f0;
+                }
+                
+                .chat-messages::-webkit-scrollbar-thumb {
+                    background: #94a3b8;
+                    border-radius: 4px;
+                }
+                
+                @media (max-width: 480px) {
+                    .chat-window {
+                        width: calc(100vw - 40px);
+                        right: 0;
+                    }
+                }
+            </style>
+            `;
+            
+            // Get DOM elements
+            const toggleBtn = document.getElementById('chat-toggle');
+            const chatWindow = document.getElementById('chat-window');
+            const closeBtn = document.getElementById('chat-close-btn');
+            const clearBtn = document.getElementById('chat-clear-btn');
+            const sendBtn = document.getElementById('chat-send');
+            const inputField = document.getElementById('chat-input');
+            const messagesDiv = document.getElementById('chat-messages');
+            const typingDiv = document.getElementById('chat-typing');
+            
+            let isOpen = false;
+            
+            function toggleChat() {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    chatWindow.classList.remove('hidden');
+                    inputField.focus();
+                    scrollToBottom();
+                } else {
+                    chatWindow.classList.add('hidden');
+                }
+            }
+            
+            function closeChat() {
+                isOpen = false;
+                chatWindow.classList.add('hidden');
+            }
+            
+            toggleBtn.addEventListener('click', toggleChat);
+            closeBtn.addEventListener('click', closeChat);
+            
+            function getCookie(name) {
+                let value = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            value = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return value;
+            }
+            
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            function scrollToBottom() {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+            
+            function addMessage(type, content, time) {
+                const div = document.createElement('div');
+                div.className = `msg ${type === 'user' ? 'user-msg' : 'bot-msg'}`;
+                div.innerHTML = `<div class="msg-content">${escapeHtml(content).replace(/\\n/g, '<br>')}</div><div class="msg-time">${time}</div>`;
+                messagesDiv.appendChild(div);
+                scrollToBottom();
+            }
+            
+            function showTyping() {
+                typingDiv.classList.remove('hidden');
+                scrollToBottom();
+            }
+            
+            function hideTyping() {
+                typingDiv.classList.add('hidden');
+            }
+            
+            async function sendMessage() {
+                const message = inputField.value.trim();
+                if (!message) return;
+                
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                addMessage('user', message, timeStr);
+                inputField.value = '';
+                showTyping();
+                
+                try {
+                    const response = await fetch('/ai-chatbot/send/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+                    
+                    const data = await response.json();
+                    hideTyping();
+                    
+                    if (data.success) {
+                        addMessage('bot', data.response, data.time);
+                    } else {
+                        addMessage('bot', '😅 Sorry, something went wrong. Please try again.', timeStr);
+                    }
+                } catch (error) {
+                    hideTyping();
+                    addMessage('bot', '😅 Network error. Please check your connection.', timeStr);
+                }
+            }
+            
+            sendBtn.addEventListener('click', sendMessage);
+            inputField.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            clearBtn.addEventListener('click', async () => {
+                if (confirm('Start a new conversation?')) {
+                    showTyping();
+                    try {
+                        const response = await fetch('/ai-chatbot/clear/', {
+                            method: 'POST',
+                            headers: { 'X-CSRFToken': getCookie('csrftoken') }
+                        });
+                        if (response.ok) {
+                            messagesDiv.innerHTML = '';
+                            addMessage('bot', '👋 New conversation started! How can I help you today?', 'Just now');
+                        }
+                    } catch(e) {
+                        console.error('Clear failed', e);
+                    }
+                    hideTyping();
+                }
+            });
+            
+            // Suggestion chips
+            document.querySelectorAll('.suggestion-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    inputField.value = chip.textContent;
+                    sendMessage();
+                });
+            });
+            
+            // Load existing messages
+            async function loadMessages() {
+                try {
+                    const response = await fetch('/ai-chatbot/messages/');
+                    const data = await response.json();
+                    if (data.messages && data.messages.length > 0) {
+                        messagesDiv.innerHTML = '';
+                        data.messages.forEach(msg => {
+                            addMessage(msg.type, msg.content, msg.time);
+                        });
+                    }
+                } catch(e) {
+                    console.error('Load messages failed', e);
+                }
+            }
+            loadMessages();
+        })();
+    </script>
+    {% endif %}
 </body>
 </html>

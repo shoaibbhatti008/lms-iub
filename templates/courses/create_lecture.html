@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-video me-2"></i> Add Video Lecture - {{ course.title }}
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Lecture Title</label>
+                            <input type="text" name="title" class="form-control" required placeholder="e.g., Introduction to Programming">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Video URL</label>
+                            <input type="url" name="video_url" class="form-control" required placeholder="https://www.youtube.com/watch?v=...">
+                            <small class="text-muted">Supports YouTube, Vimeo, or any embeddable video URL</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Duration (Optional)</label>
+                            <input type="text" name="duration" class="form-control" placeholder="e.g., 45:30">
+                            <small class="text-muted">Lecture duration in minutes</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Order</label>
+                            <input type="number" name="order" class="form-control" value="0" placeholder="0">
+                            <small class="text-muted">Lower numbers appear first</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="4" placeholder="What will students learn in this lecture?"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i> Create Lecture</button>
+                        <a href="{% url 'lecture_list' course.id %}" class="btn btn-outline ms-2">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

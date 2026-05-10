@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IUB LMS - Islamia University of Bahawalpur</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -14,284 +17,269 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
         }
         
-        .navbar-custom {
-            background: linear-gradient(135deg, #1a472a, #0d2818);
-            padding: 1rem 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            padding: 0.85rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
         }
         
         .navbar-brand {
             font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffd700 !important;
+            font-weight: 600;
+            color: #1a1a2e;
         }
         
-        .hero-section {
-            background: linear-gradient(135deg, #1a472a 0%, #2d6a4f 100%);
-            color: white;
-            position: relative;
-            overflow: hidden;
+        .navbar-brand i {
+            color: #2563eb;
+            margin-right: 8px;
         }
         
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.1)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-            background-size: cover;
-            opacity: 0.3;
+        .nav-link {
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: all 0.2s;
         }
         
-        .hero-content {
-            position: relative;
-            z-index: 2;
+        .nav-link:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+        
+        .navbar-toggler {
+            border: none;
+        }
+        
+        /* Hero */
+        .hero {
             padding: 100px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -1px;
+            color: #1a1a2e;
+        }
+        
+        .hero h1 span {
+            color: #2563eb;
+        }
+        
+        .hero .lead {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin: 1.5rem 0;
         }
         
         .btn-login {
-            background: #ffd700;
-            color: #1a472a;
-            padding: 12px 35px;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            background: #2563eb;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
         }
         
         .btn-login:hover {
-            background: #ffed4a;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: #1d4ed8;
+            transform: translateY(-2px);
         }
         
         .btn-register {
             background: transparent;
-            border: 2px solid #ffd700;
-            color: #ffd700;
-            padding: 12px 35px;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            border: 1.5px solid #e2e8f0;
+            color: #4a5568;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 12px;
+            transition: all 0.2s;
         }
         
         .btn-register:hover {
-            background: #ffd700;
-            color: #1a472a;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            border-color: #2563eb;
+            color: #2563eb;
+            transform: translateY(-2px);
         }
         
-        .btn-cta {
-            background: #ffd700;
-            color: #1a472a;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-cta:hover {
-            background: #ffed4a;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        
+        /* Feature Cards */
         .feature-card {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03), 0 8px 20px rgba(0,0,0,0.03);
             height: 100%;
         }
         
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
         }
         
         .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #1a472a, #2d6a4f);
-            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            background: #eef2ff;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            color: #ffd700;
+            margin-bottom: 1.2rem;
         }
         
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: #2563eb;
+        }
+        
+        /* Stats */
         .stats-section {
-            background: linear-gradient(135deg, #0d2818, #1a472a);
+            background: #2563eb;
             color: white;
+            padding: 60px 0;
         }
         
-        .stat-card {
-            padding: 20px;
-            border-radius: 15px;
-            background: rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
+        .stat-box h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
         }
         
-        .stat-card:hover {
-            background: rgba(255,255,255,0.2);
-            transform: scale(1.05);
+        .stat-box p {
+            opacity: 0.8;
+            font-size: 0.85rem;
         }
         
+        /* Steps */
         .step-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .step-card:hover {
-            transform: translateY(-10px);
+            text-align: center;
+            padding: 1rem;
         }
         
         .step-number {
-            width: 40px;
-            height: 40px;
-            background: #ffd700;
-            color: #1a472a;
+            width: 48px;
+            height: 48px;
+            background: #eef2ff;
+            color: #2563eb;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1.2rem;
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
+            margin: 0 auto 1rem auto;
         }
         
-        .step-icon {
-            font-size: 3rem;
-            color: #2d6a4f;
-        }
-        
+        /* CTA */
         .cta-section {
-            background: linear-gradient(135deg, #2d6a4f, #1a472a);
+            background: #1a1a2e;
             color: white;
+            padding: 70px 0;
+            text-align: center;
         }
         
+        .btn-cta {
+            background: white;
+            color: #1a1a2e;
+            padding: 14px 42px;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+        
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        /* Footer */
         .footer {
-            background: #0d2818;
-            color: white;
-            padding: 3rem 0 1rem;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            padding: 2.5rem 0 1.5rem;
         }
         
-        .footer a {
-            color: #ffd700;
-        }
-        
-        .footer a:hover {
-            color: #ffed4a;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .animate {
-            animation: fadeInUp 0.8s ease-out;
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero { padding: 60px 0; }
+            .stat-box h2 { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">
-                <i class="fas fa-graduation-cap me-2"></i>
-                IUB LMS
+                <i class="fas fa-graduation-cap"></i> IUB LMS
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{% url 'login' %}">
-                            <i class="fas fa-sign-in-alt me-1"></i> Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="{% url 'register' %}">
-                            <i class="fas fa-user-plus me-1"></i> Register
-                        </a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#how-it-works">How it Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    {% block content %}
-    {% endblock %}
+    {% block content %}{% endblock %}
 
     <footer class="footer">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <h5><i class="fas fa-graduation-cap me-2"></i>IUB LMS</h5>
-                    <p>Islamia University of Bahawalpur's official Learning Management System. Empowering education through technology.</p>
+                    <h6><i class="fas fa-graduation-cap me-2" style="color: #2563eb;"></i> IUB LMS</h6>
+                    <p class="text-muted small">Official Learning Management System of Islamia University of Bahawalpur.</p>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h5>Quick Links</h5>
+                    <h6>Quick Links</h6>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'login' %}" class="text-decoration-none">Login</a></li>
-                        <li><a href="{% url 'register' %}" class="text-decoration-none">Register</a></li>
-                        <li><a href="#" class="text-decoration-none">About Us</a></li>
-                        <li><a href="#" class="text-decoration-none">Contact</a></li>
+                        <li><a href="{% url 'login' %}" class="text-muted">Login</a></li>
+                        <li><a href="{% url 'register' %}" class="text-muted">Register</a></li>
+                        <li><a href="#" class="text-muted">About</a></li>
+                        <li><a href="#" class="text-muted">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h5>Contact Info</h5>
-                    <p><i class="fas fa-map-marker-alt me-2"></i> Baghdad-ul-Jadeed Campus, Bahawalpur</p>
-                    <p><i class="fas fa-phone me-2"></i> +92-62-9250235</p>
-                    <p><i class="fas fa-envelope me-2"></i> info@iub.edu.pk</p>
+                    <h6>Contact</h6>
+                    <p class="text-muted small">Baghdad-ul-Jadeed Campus<br>Bahawalpur, Pakistan<br>info@iub.edu.pk</p>
                 </div>
             </div>
-            <hr class="bg-white">
+            <hr>
             <div class="text-center">
-                <p class="mb-0">&copy; 2025 Islamia University of Bahawalpur. All rights reserved.</p>
+                <p class="small text-muted mb-0">&copy; 2025 Islamia University of Bahawalpur</p>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.feature-card, .stat-card, .step-card').forEach(el => {
-            observer.observe(el);
-        });
-    </script>
 </body>
 </html>

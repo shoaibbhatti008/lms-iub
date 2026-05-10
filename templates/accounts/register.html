@@ -1,76 +1,240 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base_home.html' %}
 
 {% block content %}
-<div class="row justify-content-center mt-4">
-    <div class="col-md-6">
-        <div class="card fade-in">
-            <div class="card-header bg-primary text-white text-center py-3">
-                <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Create Student Account</h3>
-            </div>
-            <div class="card-body p-4">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>
-                    <strong>Note:</strong> Registration is only for <strong>Students</strong>. 
-                    Teachers and Admins can only be created by existing Admins.
+<div class="container py-5">
+    <div class="row justify-content-center align-items-center min-vh-70">
+        <div class="col-md-6">
+            <!-- Register Card -->
+            <div class="card border-0 shadow-lg" style="border-radius: 1.5rem; overflow: hidden;" data-aos="fade-up">
+                
+                <!-- Card Header with Gradient -->
+                <div class="text-center p-4" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                    <div class="mx-auto mb-3" style="width: 70px; height: 70px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+                        <i class="fas fa-user-plus fa-2x" style="color: #3b82f6;"></i>
+                    </div>
+                    <h3 class="fw-bold text-white mb-1">Create Account</h3>
+                    <p class="text-white-50 mb-0">Join IUB LMS as a Student</p>
                 </div>
                 
-                <form method="post">
-                    {% csrf_token %}
+                <!-- Card Body -->
+                <div class="card-body p-4 p-lg-5">
                     
-                    <div class="mb-3">
-                        <label class="form-label">Username <span class="text-danger">*</span></label>
-                        <input type="text" name="username" class="form-control" required>
-                        <small class="text-muted">Required. 150 characters or fewer.</small>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">First Name</label>
-                                <input type="text" name="first_name" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" name="last_name" class="form-control">
-                            </div>
+                    <!-- Info Alert -->
+                    <div class="alert alert-info d-flex align-items-center p-3 mb-4" style="background: #eff6ff; border: none; border-radius: 0.75rem;">
+                        <i class="fas fa-info-circle me-3" style="color: #3b82f6; font-size: 1.2rem;"></i>
+                        <div class="small">
+                            <strong>Student Registration Only</strong><br>
+                            Teachers and Admins are created by existing Administrators.
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control" required>
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-3">
+                            <!-- Username Field -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold mb-2">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0" style="border-radius: 0.75rem 0 0 0.75rem;">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" name="username" class="form-control border-start-0" required placeholder="Username" style="border-radius: 0 0.75rem 0.75rem 0;">
+                                </div>
+                            </div>
+                            
+                            <!-- Email Field -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold mb-2">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0" style="border-radius: 0.75rem 0 0 0.75rem;">
+                                        <i class="fas fa-envelope text-muted"></i>
+                                    </span>
+                                    <input type="email" name="email" class="form-control border-start-0" required placeholder="Email" style="border-radius: 0 0.75rem 0.75rem 0;">
+                                </div>
+                            </div>
+                            
+                            <!-- First Name Field -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold mb-2">First Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0" style="border-radius: 0.75rem 0 0 0.75rem;">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" name="first_name" class="form-control border-start-0" placeholder="First name" style="border-radius: 0 0.75rem 0.75rem 0;">
+                                </div>
+                            </div>
+                            
+                            <!-- Last Name Field -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold mb-2">Last Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0" style="border-radius: 0.75rem 0 0 0.75rem;">
+                                        <i class="fas fa-user text-muted"></i>
+                                    </span>
+                                    <input type="text" name="last_name" class="form-control border-start-0" placeholder="Last name" style="border-radius: 0 0.75rem 0.75rem 0;">
+                                </div>
+                            </div>
+                            
+                            <!-- Password Field -->
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold mb-2">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0" style="border-radius: 0.75rem 0 0 0.75rem;">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span>
+                                    <input type="password" name="password1" class="form-control border-start-0" required placeholder="Create password" id="password" style="border-radius: 0 0.75rem 0.75rem 0;">
+                                    <button type="button" class="btn btn-outline-secondary border-start-0" onclick="togglePassword()" style="border-radius: 0 0.75rem 0.75rem 0;">
+                                        <i class="fas fa-eye" id="eyeIcon"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted mt-1 d-block">
+                                    <i class="fas fa-shield-alt me-1"></i> Must be at least 8 characters
+                                </small>
+                            </div>
+                            
+                            <!-- Confirm Password Field -->
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold mb-2">Confirm Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-transparent border-end-0" style="border-radius: 0.75rem 0 0 0.75rem;">
+                                        <i class="fas fa-check-circle text-muted"></i>
+                                    </span>
+                                    <input type="password" name="password2" class="form-control border-start-0" required placeholder="Confirm password" id="confirm_password" style="border-radius: 0 0.75rem 0.75rem 0;">
+                                </div>
+                            </div>
+                            
+                            <!-- Terms Checkbox -->
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="terms" required style="cursor: pointer;">
+                                    <label class="form-check-label small" for="terms" style="cursor: pointer;">
+                                        I agree to the <a href="#" style="color: #3b82f6; text-decoration: none;">Terms and Conditions</a>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Register Button -->
+                        <button type="submit" class="btn w-100 py-2 fw-semibold mt-4" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border-radius: 0.75rem;">
+                            <i class="fas fa-user-plus me-2"></i> Create Account
+                        </button>
+                    </form>
+                    
+                    <!-- Divider -->
+                    <div class="position-relative my-4">
+                        <hr>
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 small text-muted">OR</span>
                     </div>
                     
-                    <div class="mb-3">
-                        <label class="form-label">Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password1" class="form-control" required>
-                        <small class="text-muted">Must be at least 8 characters. Cannot be too common.</small>
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <p class="small mb-0 text-muted">
+                            Already have an account? 
+                            <a href="{% url 'login' %}" class="fw-semibold text-decoration-none" style="color: #3b82f6;">
+                                Sign in <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </p>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password2" class="form-control" required>
-                    </div>
-                    
-                    <div class="alert alert-warning">
-                        <i class="fas fa-shield-alt me-2"></i>
-                        <strong>Security Notice:</strong> You are registering as a <strong>Student</strong>. 
-                        You will not have access to teacher or admin features.
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-user-plus me-2"></i>Register as Student
-                    </button>
-                </form>
-                <hr>
-                <p class="text-center mb-0">
-                    Already have an account? <a href="{% url 'login' %}">Login here</a>
-                </p>
+                </div>
+            </div>
+            
+            <!-- Back to Home Button -->
+            <div class="text-center mt-4">
+                <a href="{% url 'home' %}" class="btn btn-link text-muted text-decoration-none">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Home
+                </a>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Password Toggle & Validation Script -->
+<script>
+    // Password Show/Hide Toggle
+    function togglePassword() {
+        var passwordField = document.getElementById("password");
+        var eyeIcon = document.getElementById("eyeIcon");
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    }
+    
+    // Password Match Validation
+    var password = document.getElementById("password");
+    var confirm_password = document.getElementById("confirm_password");
+    
+    function validatePassword() {
+        if (password.value !== confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords do not match!");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+    
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+</script>
+
+<style>
+    /* Custom Styles */
+    .form-control, .input-group-text {
+        border-color: #e2e8f0;
+        transition: all 0.2s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: none;
+    }
+    
+    .form-control:focus + .input-group-text {
+        border-color: #3b82f6;
+    }
+    
+    .btn-outline-secondary {
+        border-color: #e2e8f0;
+        color: #64748b;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: transparent;
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .form-check-input:checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+    }
+    
+    .form-check-input:focus {
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    
+    .min-vh-70 {
+        min-height: 70vh;
+    }
+    
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem !important;
+        }
+    }
+</style>
 {% endblock %}

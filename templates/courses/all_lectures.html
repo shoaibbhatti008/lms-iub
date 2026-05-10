@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="fas fa-video me-2" style="color: var(--accent);"></i> All Video Lectures</h1>
+        <span class="badge bg-primary">{{ total_lectures }} Lectures</span>
+    </div>
+    
+    {% if user.role == 'student' and total_lectures > 0 %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h6>Your Learning Progress</h6>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-success" style="width: {{ progress_percentage }}%"></div>
+            </div>
+            <div class="mt-2">{{ watched_count }} of {{ total_lectures }} lectures watched ({{ progress_percentage }}%)</div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row g-4">
+        {% for lecture in lectures %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="ratio ratio-16x9 bg-dark">
+                    <iframe src="{{ lecture.get_embed_url }}" title="{{ lecture.title }}" allowfullscreen style="border: none;"></iframe>
+                </div>
+                <div class="card-body">
+                    <span class="badge bg-primary mb-2">{{ lecture.course.course_code }}</span>
+                    <h5>{{ lecture.title }}</h5>
+                    <p class="small text-muted">{{ lecture.course.title }}</p>
+                    <p class="small">{{ lecture.description|truncatewords:15 }}</p>
+                    {% if user.role == 'student' %}
+                        {% if lecture.id in attended_lectures %}
+                            <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Completed</span>
+                        {% else %}
+                            <span class="badge bg-warning"><i class="fas fa-clock me-1"></i> Not Watched</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-white border-0 pb-3">
+                    <a href="{% url 'lecture_detail' lecture.course.id lecture.id %}" class="btn btn-primary w-100">
+                        <i class="fas fa-play me-1"></i> Watch Lecture
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-video fa-3x text-muted mb-3"></i>
+            <h5>No Lectures Available</h5>
+            <p class="text-muted">No video lectures have been added yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

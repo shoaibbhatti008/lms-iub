@@ -2,76 +2,22 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="fas fa-upload me-2"></i>Submit Assignment</h4>
-                    <small>{{ assignment.title }} - {{ assignment.course.title }}</small>
-                </div>
-                <div class="card-body">
-                    <!-- Assignment Details -->
-                    <div class="alert alert-info">
-                        <h5><i class="fas fa-info-circle me-2"></i>Assignment Instructions:</h5>
-                        <p>{{ assignment.description }}</p>
-                        <hr>
-                        <div class="row">
-                            <div class="col-6">
-                                <strong>📅 Deadline:</strong> {{ assignment.deadline|date:"M d, Y H:i" }}
-                            </div>
-                            <div class="col-6">
-                                <strong>⭐ Max Marks:</strong> {{ assignment.max_marks }}
-                            </div>
-                        </div>
-                        
-                        {% if assignment.attachment %}
-                        <div class="mt-2">
-                            <strong>📎 Teacher's Attachment:</strong>
-                            <a href="{{ assignment.attachment.url }}" class="btn btn-sm btn-outline-primary" download>
-                                <i class="fas fa-download me-1"></i>Download
-                            </a>
-                        </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Submission Form -->
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Your Answer (Text)</label>
-                            <textarea name="answer_text" class="form-control" rows="6" placeholder="Write your answer here..."></textarea>
-                            <small class="text-muted">You can write your answer directly in text box</small>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">OR Upload Answer File</label>
-                            <input type="file" name="answer_file" class="form-control" accept=".pdf,.doc,.docx,.txt,.zip,.jpg,.png">
-                            <small class="text-muted">Supported formats: PDF, DOC, DOCX, TXT, ZIP, JPG, PNG (Max: 25MB)</small>
-                        </div>
-                        
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>Note:</strong> You can either write your answer in text box OR upload a file. At least one is required. 
-                            You cannot edit after submission.
-                        </div>
-                        
-                        <div class="alert alert-danger">
-                            <i class="fas fa-clock me-2"></i>
-                            <strong>Deadline Warning:</strong> Late submissions will not be accepted!
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane me-2"></i>Submit Assignment
-                        </button>
-                        <a href="{% url 'assignment_detail' assignment.id %}" class="btn btn-secondary">
-                            <i class="fas fa-times me-2"></i>Cancel
-                        </a>
-                    </form>
-                </div>
-            </div>
+<div class="container"><div class="row justify-content-center"><div class="col-md-8">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+    
+    <div class="card">
+        <div class="card-header bg-primary text-white"><h4 class="mb-0"><i class="fas fa-upload me-2"></i> Submit Assignment</h4><small>{{ assignment.title }} - {{ assignment.course.title }}</small></div>
+        <div class="card-body">
+            <div class="alert alert-info"><h5>Assignment Instructions</h5><p>{{ assignment.description }}</p><hr><div class="row"><div class="col-6"><strong>Deadline:</strong> {{ assignment.deadline|date:"M d, Y H:i" }}</div><div class="col-6"><strong>Max Marks:</strong> {{ assignment.max_marks }}</div></div>{% if assignment.attachment %}<div class="mt-2"><strong>Attachment:</strong> <a href="{{ assignment.attachment.url }}" class="btn btn-sm btn-outline-primary" download>Download</a></div>{% endif %}</div>
+            
+            <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                <div class="mb-3"><label class="form-label">Your Answer (Text)</label><textarea name="answer_text" class="form-control" rows="6" placeholder="Write your answer here..."></textarea><small class="text-muted">You can write your answer directly in text box</small></div>
+                <div class="mb-3"><label class="form-label">OR Upload Answer File</label><input type="file" name="answer_file" class="form-control" accept=".pdf,.doc,.docx,.txt,.zip"><small class="text-muted">Max 25MB. Supported: PDF, DOC, DOCX, TXT, ZIP</small></div>
+                <div class="alert alert-warning"><i class="fas fa-exclamation-triangle me-2"></i> You can either write text answer OR upload a file. At least one is required.</div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i> Submit Assignment</button>
+                <a href="{% url 'assignment_detail' assignment.id %}" class="btn btn-secondary">Cancel</a>
+            </form>
         </div>
     </div>
-</div>
+</div></div></div>
 {% endblock %}

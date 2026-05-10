@@ -1,156 +1,71 @@
 {% extends 'base_home.html' %}
-{% load static %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section">
+<section class="hero">
     <div class="container">
-        <div class="row align-items-center min-vh-100">
-            <div class="col-lg-8 mx-auto text-center">
-                <div class="hero-content">
-                    <h1 class="display-3 fw-bold mb-4">
-                        <i class="fas fa-graduation-cap me-3"></i>
-                        Islamia University of Bahawalpur
-                    </h1>
-                    <p class="lead mb-4">
-                        Welcome to the official Learning Management System (LMS) of Islamia University of Bahawalpur. 
-                        Empowering education through technology, providing seamless access to courses, assignments, and academic resources.
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="{% url 'login' %}" class="btn btn-login me-3">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </a>
-                        <a href="{% url 'register' %}" class="btn btn-register">
-                            <i class="fas fa-user-plus me-2"></i>Register
-                        </a>
-                    </div>
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1>Learn anywhere,<br> anytime with <span>IUB LMS</span></h1>
+                <p class="lead">The official Learning Management System of Islamia University of Bahawalpur. Access courses, submit assignments, and track your progress online.</p>
+                <div>
+                    <a href="{% url 'login' %}" class="btn-login">Get Started <i class="fas fa-arrow-right ms-2"></i></a>
+                    <a href="{% url 'register' %}" class="btn-register">Create Account</a>
                 </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-graduation-cap" style="font-size: 220px; color: #eef2ff;"></i>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Features Section -->
-<section class="features-section py-5">
+<section id="features" class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold">Why Choose IUB LMS?</h2>
-            <p class="lead">A complete solution for modern education</p>
+            <h2 class="fw-bold">Everything you need to succeed</h2>
+            <p class="text-muted">A complete learning platform for modern education</p>
         </div>
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon mx-auto mb-3">
-                        <i class="fas fa-chalkboard-user"></i>
-                    </div>
-                    <h4>Online Courses</h4>
-                    <p>Access course materials, lectures, and resources anytime, anywhere</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon mx-auto mb-3">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <h4>Assignments</h4>
-                    <p>Submit assignments online, get feedback, and track your progress</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-card text-center p-4">
-                    <div class="feature-icon mx-auto mb-3">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h4>Track Progress</h4>
-                    <p>Monitor your academic performance and view grades instantly</p>
-                </div>
-            </div>
+            <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-chalkboard-user"></i></div><h5>Online Courses</h5><p class="text-muted">Access course materials anytime, anywhere</p></div></div>
+            <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-file-alt"></i></div><h5>Smart Assignments</h5><p class="text-muted">Submit work and get feedback instantly</p></div></div>
+            <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h5>Track Progress</h5><p class="text-muted">Monitor your academic performance</p></div></div>
+            <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-bell"></i></div><h5>Announcements</h5><p class="text-muted">Stay updated with course notifications</p></div></div>
+            <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><h5>Secure Platform</h5><p class="text-muted">Your data is safe and protected</p></div></div>
+            <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="fas fa-headset"></i></div><h5>24/7 Support</h5><p class="text-muted">Get help whenever you need it</p></div></div>
         </div>
     </div>
 </section>
 
-<!-- Stats Section -->
-<section class="stats-section py-5">
+<section class="stats-section">
     <div class="container">
-        <div class="row text-center g-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h2 class="display-4 fw-bold">5000+</h2>
-                    <p class="mb-0">Active Students</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h2 class="display-4 fw-bold">200+</h2>
-                    <p class="mb-0">Expert Teachers</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h2 class="display-4 fw-bold">1000+</h2>
-                    <p class="mb-0">Online Courses</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <h2 class="display-4 fw-bold">24/7</h2>
-                    <p class="mb-0">Learning Support</p>
-                </div>
-            </div>
+        <div class="row text-center">
+            <div class="col-md-3"><div class="stat-box"><h2>5,000+</h2><p>Active Students</p></div></div>
+            <div class="col-md-3"><div class="stat-box"><h2>200+</h2><p>Expert Teachers</p></div></div>
+            <div class="col-md-3"><div class="stat-box"><h2>1,000+</h2><p>Online Courses</p></div></div>
+            <div class="col-md-3"><div class="stat-box"><h2>24/7</h2><p>Support Available</p></div></div>
         </div>
     </div>
 </section>
 
-<!-- How It Works Section -->
-<section class="how-it-works py-5">
+<section id="how-it-works" class="py-5">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold">How It Works</h2>
-            <p class="lead">Simple steps to start your learning journey</p>
+            <h2 class="fw-bold">How It Works</h2>
+            <p class="text-muted">Three simple steps to start your learning journey</p>
         </div>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="step-card text-center p-4">
-                    <div class="step-number">1</div>
-                    <div class="step-icon mb-3">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <h4>Create Account</h4>
-                    <p>Register yourself as a student to get started</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="step-card text-center p-4">
-                    <div class="step-number">2</div>
-                    <div class="step-icon mb-3">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <h4>Enroll in Courses</h4>
-                    <p>Choose your courses and start learning</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="step-card text-center p-4">
-                    <div class="step-number">3</div>
-                    <div class="step-icon mb-3">
-                        <i class="fas fa-award"></i>
-                    </div>
-                    <h4>Get Certified</h4>
-                    <p>Complete assignments and earn certificates</p>
-                </div>
-            </div>
+        <div class="row">
+            <div class="col-md-4"><div class="step-card"><div class="step-number">1</div><i class="fas fa-user-plus fa-2x mb-3" style="color: #2563eb;"></i><h5>Create Account</h5><p class="text-muted">Register as a student to get started</p></div></div>
+            <div class="col-md-4"><div class="step-card"><div class="step-number">2</div><i class="fas fa-book-open fa-2x mb-3" style="color: #2563eb;"></i><h5>Enroll in Courses</h5><p class="text-muted">Choose your courses and begin learning</p></div></div>
+            <div class="col-md-4"><div class="step-card"><div class="step-number">3</div><i class="fas fa-certificate fa-2x mb-3" style="color: #2563eb;"></i><h5>Get Certified</h5><p class="text-muted">Complete assignments and earn certificates</p></div></div>
         </div>
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="cta-section py-5">
-    <div class="container text-center">
-        <h2 class="display-5 fw-bold mb-4">Ready to Start Your Learning Journey?</h2>
-        <p class="lead mb-4">Join thousands of students already learning on IUB LMS</p>
-        <a href="{% url 'register' %}" class="btn btn-cta btn-lg">
-            <i class="fas fa-arrow-right me-2"></i>Get Started Now
-        </a>
+<section class="cta-section">
+    <div class="container">
+        <h2 class="fw-bold">Ready to start your journey?</h2>
+        <p>Join thousands of students already learning on IUB LMS</p>
+        <a href="{% url 'register' %}" class="btn-cta">Get Started Now <i class="fas fa-arrow-right ms-2"></i></a>
     </div>
 </section>
 {% endblock %}

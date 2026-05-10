@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Course</a>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="fas fa-chalkboard me-2" style="color: #10b981;"></i> Live Classes - {{ course.title }}</h1>
+        {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+        <a href="{% url 'create_live_class' course.id %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> Schedule Live Class
+        </a>
+        {% endif %}
+    </div>
+    
+    <div class="row g-4">
+        {% for lc in live_classes %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">{{ lc.title }}</h5>
+                    <div>
+                        {% if lc.status == 'ongoing' %}
+                            <span class="badge bg-success">Live Now</span>
+                        {% elif lc.status == 'scheduled' %}
+                            <span class="badge bg-warning">Scheduled</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Completed</span>
+                        {% endif %}
+                        
+                        {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+                        <a href="{% url 'delete_live_class' lc.id %}" class="text-danger ms-2" onclick="return confirm('Delete this live class?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">{{ lc.description|truncatewords:20 }}</p>
+                    <p><strong>📅 Date:</strong> {{ lc.start_time|date:"M d, Y" }}</p>
+                    <p><strong>⏰ Time:</strong> {{ lc.start_time|date:"H:i" }} - {{ lc.end_time|date:"H:i" }}</p>
+                    <p><strong>🔗 Meeting ID:</strong> <code>{{ lc.meeting_link }}</code></p>
+                    
+                    {% if lc.status == 'ongoing' %}
+                        <a href="{% url 'live_class_room' lc.meeting_link %}" class="btn btn-success w-100">Join Now</a>
+                    {% elif lc.status == 'scheduled' %}
+                        {% if now < lc.start_time %}
+                            <button class="btn btn-secondary w-100" disabled>Starts at {{ lc.start_time|date:"H:i" }}</button>
+                        {% else %}
+                            <a href="{% url 'start_live_class' lc.id %}" class="btn btn-primary w-100">Start Now</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'live_class_attendance_detail' course.id lc.id %}" class="btn btn-outline w-100">
+                            <i class="fas fa-chart-bar me-1"></i> View Attendance
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center py-5">
+                <i class="fas fa-chalkboard fa-3x mb-3 d-block"></i>
+                <h5>No Live Classes Scheduled</h5>
+                {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+                <a href="{% url 'create_live_class' course.id %}" class="btn btn-primary mt-3">Schedule First Live Class</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

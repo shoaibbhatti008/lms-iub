@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Course</a>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="fas fa-video me-2" style="color: var(--accent);"></i> Video Lectures - {{ course.title }}</h1>
+        {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+        <div>
+            <a href="{% url 'create_lecture' course.id %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i> Add Lecture
+            </a>
+            <a href="{% url 'lecture_attendance' course.id %}" class="btn btn-outline ms-2">
+                <i class="fas fa-chart-bar me-2"></i> Attendance Report
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="row g-4">
+        {% for lecture in lectures %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">
+            <div class="card h-100">
+                <div class="position-relative">
+                    <div class="ratio ratio-16x9 bg-dark">
+                        <iframe src="{{ lecture.get_embed_url }}" title="{{ lecture.title }}" allowfullscreen style="border: none;"></iframe>
+                    </div>
+                    <span class="badge bg-dark position-absolute bottom-0 end-0 m-2">
+                        <i class="fas fa-clock me-1"></i> {{ lecture.duration|default:"30:00" }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0">{{ lecture.title }}</h5>
+                        {% if user.role == 'admin' or lecture.created_by == user %}
+                        <a href="{% url 'delete_lecture' lecture.id %}" class="text-danger" onclick="return confirm('Delete this lecture?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    <p class="card-text small text-muted">{{ lecture.description|truncatewords:20 }}</p>
+                    
+                    {% if user.role == 'student' %}
+                        {% if lecture.id in attended_lectures %}
+                            <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Watched</span>
+                        {% else %}
+                            <span class="badge bg-warning"><i class="fas fa-clock me-1"></i> Not Watched</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-white border-0 pb-3">
+                    <a href="{% url 'lecture_detail' course.id lecture.id %}" class="btn btn-primary w-100">
+                        Watch Lecture <i class="fas fa-play ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center py-5">
+                <i class="fas fa-video fa-3x mb-3 d-block"></i>
+                <h5>No Lectures Available</h5>
+                {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+                <a href="{% url 'create_lecture' course.id %}" class="btn btn-primary mt-3">Add First Lecture</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

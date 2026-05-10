@@ -1,0 +1,571 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .live-room-container {
+        display: flex;
+        flex-direction: row;
+        height: calc(100vh - 70px);
+        background: #0f0f1a;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    .video-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+    }
+    
+    .main-video {
+        flex: 1;
+        background: #1a1a2e;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 15px;
+        min-height: 300px;
+    }
+    
+    .main-video video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .video-label {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    
+    .participants-grid {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .participant-card {
+        width: 160px;
+        min-width: 160px;
+        background: #1a1a2e;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        border: 2px solid transparent;
+        position: relative;
+    }
+    
+    .participant-card.active {
+        border-color: #4f46e5;
+    }
+    
+    .participant-card video {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+        background: #2a2a3e;
+    }
+    
+    .participant-info {
+        padding: 8px;
+        text-align: center;
+        background: #1a1a2e;
+        color: white;
+    }
+    
+    .participant-name {
+        font-size: 11px;
+        font-weight: 600;
+    }
+    
+    .participant-role {
+        font-size: 9px;
+        color: #888;
+    }
+    
+    .status-icons {
+        position: absolute;
+        bottom: 40px;
+        right: 8px;
+        display: flex;
+        gap: 4px;
+    }
+    
+    .status-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        background: rgba(0,0,0,0.7);
+    }
+    
+    .status-icon.mic-on { background: #10b981; color: white; }
+    .status-icon.mic-off { background: #dc2626; color: white; }
+    .status-icon.cam-on { background: #10b981; color: white; }
+    .status-icon.cam-off { background: #dc2626; color: white; }
+    
+    .controls-area {
+        width: 300px;
+        background: #1a1a2e;
+        border-left: 1px solid #2a2a3e;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        overflow-y: auto;
+    }
+    
+    .class-info {
+        background: #2a2a3e;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .class-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: white;
+    }
+    
+    .participant-count {
+        font-size: 12px;
+        color: #4f46e5;
+        margin-top: 8px;
+    }
+    
+    .control-buttons {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .ctrl-btn {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s;
+    }
+    
+    .ctrl-btn.mic { background: #2a2a3e; color: white; }
+    .ctrl-btn.mic.muted { background: #dc2626; color: white; }
+    .ctrl-btn.camera { background: #2a2a3e; color: white; }
+    .ctrl-btn.camera.off { background: #dc2626; color: white; }
+    .ctrl-btn.leave { background: #dc2626; color: white; }
+    .ctrl-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    
+    .teacher-controls {
+        background: #2a2a3e;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 15px;
+        max-height: 280px;
+        overflow-y: auto;
+    }
+    
+    .teacher-controls h4 {
+        color: white;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+    
+    .student-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .student-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        background: #1a1a2e;
+        border-radius: 8px;
+    }
+    
+    .student-name {
+        color: white;
+        font-size: 11px;
+    }
+    
+    .student-controls {
+        display: flex;
+        gap: 5px;
+    }
+    
+    .student-controls button {
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 10px;
+    }
+    
+    .enable-mic { background: #10b981; color: white; }
+    .disable-mic { background: #dc2626; color: white; }
+    .enable-cam { background: #4f46e5; color: white; }
+    .disable-cam { background: #dc2626; color: white; }
+    
+    .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #2a2a3e;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        max-height: 200px;
+    }
+    
+    .message {
+        margin-bottom: 10px;
+    }
+    
+    .message-sender {
+        font-size: 10px;
+        font-weight: 600;
+        color: #4f46e5;
+    }
+    
+    .message-text {
+        font-size: 11px;
+        color: white;
+        background: #1a1a2e;
+        padding: 6px 10px;
+        border-radius: 12px;
+        display: inline-block;
+        max-width: 85%;
+        word-wrap: break-word;
+    }
+    
+    .message-self {
+        text-align: right;
+    }
+    
+    .message-self .message-text {
+        background: #4f46e5;
+    }
+    
+    .chat-input-area {
+        display: flex;
+        padding: 10px;
+        background: #1a1a2e;
+        gap: 8px;
+        border-top: 1px solid #2a2a3e;
+    }
+    
+    .chat-input-area input {
+        flex: 1;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 20px;
+        background: #2a2a3e;
+        color: white;
+        outline: none;
+        font-size: 11px;
+    }
+    
+    .chat-input-area button {
+        padding: 8px 15px;
+        background: #4f46e5;
+        border: none;
+        border-radius: 20px;
+        color: white;
+        cursor: pointer;
+    }
+    
+    @media (max-width: 768px) {
+        .live-room-container { flex-direction: column; }
+        .controls-area { width: 100%; border-left: none; border-top: 1px solid #2a2a3e; }
+        .participant-card { width: 130px; min-width: 130px; }
+    }
+</style>
+
+<div class="live-room-container">
+    <div class="video-area">
+        <div class="main-video">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="video-label" id="activeSpeakerLabel">{{ live_class.title }}</div>
+        </div>
+        <div class="participants-grid" id="participantsGrid">
+            <div class="participant-card active" id="localParticipant">
+                <video id="localVideo" autoplay playsinline muted></video>
+                <div class="participant-info">
+                    <div class="participant-name">You ({{ user.username }})</div>
+                    <div class="participant-role">{{ user.get_role_display }}</div>
+                </div>
+                <div class="status-icons">
+                    <div class="status-icon mic-on" id="localMicStatus"><i class="fas fa-microphone"></i></div>
+                    <div class="status-icon cam-on" id="localCamStatus"><i class="fas fa-video"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="controls-area">
+        <div class="class-info">
+            <div class="class-title">{{ live_class.title }}</div>
+            <div class="class-meta">{{ live_class.course.title }}</div>
+            <div class="participant-count" id="participantCount"><i class="fas fa-users me-1"></i> Participants: 1</div>
+        </div>
+        
+        <div class="control-buttons">
+            <button class="ctrl-btn mic" id="micBtn" onclick="toggleMic()"><i class="fas fa-microphone"></i> Mic</button>
+            <button class="ctrl-btn camera" id="camBtn" onclick="toggleCamera()"><i class="fas fa-video"></i> Cam</button>
+            <button class="ctrl-btn leave" onclick="leaveClass()"><i class="fas fa-sign-out-alt"></i> Leave</button>
+        </div>
+        
+        {% if is_teacher %}
+        <div class="teacher-controls">
+            <h4><i class="fas fa-chalkboard-teacher"></i> Students (<span id="studentCount">0</span>)</h4>
+            <div class="student-list" id="studentList">No students joined</div>
+        </div>
+        {% endif %}
+        
+        <div class="chat-area">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message"><div class="message-sender">System</div><div class="message-text">Welcome to live class!</div></div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Type message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let localStream = null;
+    let currentRoom = "{{ live_class.meeting_link }}";
+    let userId = {{ request.user.id }};
+    let userName = "{{ request.user.username }}";
+    let userRole = "{{ request.user.role }}";
+    let isTeacher = (userRole === 'teacher' || userRole === 'admin');
+    let isMicOn = true;
+    let isCamOn = true;
+    let pollingInterval = null;
+    
+    async function getLocalMedia() {
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            document.getElementById('localVideo').srcObject = localStream;
+            return true;
+        } catch (error) {
+            alert('Cannot access camera/microphone. Please check permissions.');
+            return false;
+        }
+    }
+    
+    function toggleMic() {
+        if (localStream && localStream.getAudioTracks()[0]) {
+            isMicOn = !isMicOn;
+            localStream.getAudioTracks()[0].enabled = isMicOn;
+            const micBtn = document.getElementById('micBtn');
+            const micStatus = document.getElementById('localMicStatus');
+            if (isMicOn) {
+                micBtn.innerHTML = '<i class="fas fa-microphone"></i> Mic';
+                micBtn.classList.remove('muted');
+                micStatus.innerHTML = '<i class="fas fa-microphone"></i>';
+                micStatus.className = 'status-icon mic-on';
+            } else {
+                micBtn.innerHTML = '<i class="fas fa-microphone-slash"></i> Mic';
+                micBtn.classList.add('muted');
+                micStatus.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+                micStatus.className = 'status-icon mic-off';
+            }
+            updateStatus('mic', isMicOn);
+        }
+    }
+    
+    function toggleCamera() {
+        if (localStream && localStream.getVideoTracks()[0]) {
+            isCamOn = !isCamOn;
+            localStream.getVideoTracks()[0].enabled = isCamOn;
+            const camBtn = document.getElementById('camBtn');
+            const camStatus = document.getElementById('localCamStatus');
+            if (isCamOn) {
+                camBtn.innerHTML = '<i class="fas fa-video"></i> Cam';
+                camBtn.classList.remove('off');
+                camStatus.innerHTML = '<i class="fas fa-video"></i>';
+                camStatus.className = 'status-icon cam-on';
+            } else {
+                camBtn.innerHTML = '<i class="fas fa-video-slash"></i> Cam';
+                camBtn.classList.add('off');
+                camStatus.innerHTML = '<i class="fas fa-video-slash"></i>';
+                camStatus.className = 'status-icon cam-off';
+            }
+            updateStatus('camera', isCamOn);
+        }
+    }
+    
+    async function updateStatus(type, status) {
+        try {
+            await fetch(`/courses/live-class/${currentRoom}/api/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'update_status', type: type, status: status })
+            });
+        } catch(e) { console.error(e); }
+    }
+    
+    async function joinClass() {
+        try {
+            const response = await fetch(`/courses/live-class/${currentRoom}/api/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'join' })
+            });
+            const data = await response.json();
+            updateParticipants(data.participants);
+            startPolling();
+        } catch(e) { console.error(e); }
+    }
+    
+    async function leaveClass() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        if (localStream) localStream.getTracks().forEach(track => track.stop());
+        await fetch(`/courses/live-class/${currentRoom}/api/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'leave' })
+        });
+        window.location.href = "{% url 'course_detail' live_class.course.id %}";
+    }
+    
+    function updateParticipants(participants) {
+        const grid = document.getElementById('participantsGrid');
+        const studentList = document.getElementById('studentList');
+        const count = participants.length;
+        document.getElementById('participantCount').innerHTML = `<i class="fas fa-users me-1"></i> Participants: ${count}`;
+        
+        const localCard = document.getElementById('localParticipant');
+        grid.innerHTML = '';
+        if (localCard) grid.appendChild(localCard);
+        
+        participants.forEach(p => {
+            if (p.user_id !== userId) {
+                const card = document.createElement('div');
+                card.className = 'participant-card';
+                card.onclick = () => { document.getElementById('activeSpeakerLabel').innerHTML = p.username; };
+                card.innerHTML = `
+                    <video id="video-${p.user_id}" autoplay playsinline></video>
+                    <div class="participant-info">
+                        <div class="participant-name">${p.username}</div>
+                        <div class="participant-role">${p.role}</div>
+                    </div>
+                    <div class="status-icons">
+                        <div class="status-icon ${p.is_mic_on ? 'mic-on' : 'mic-off'}"><i class="fas fa-microphone${p.is_mic_on ? '' : '-slash'}"></i></div>
+                        <div class="status-icon ${p.is_camera_on ? 'cam-on' : 'cam-off'}"><i class="fas fa-video${p.is_camera_on ? '' : '-slash'}"></i></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+        });
+        
+        if (isTeacher && studentList) {
+            studentList.innerHTML = '';
+            const students = participants.filter(p => p.role === 'student' && p.user_id !== userId);
+            document.getElementById('studentCount').innerHTML = students.length;
+            if (students.length === 0) {
+                studentList.innerHTML = '<div style="text-align: center; color: #888; padding: 15px;">No students joined</div>';
+            } else {
+                students.forEach(p => {
+                    const item = document.createElement('div');
+                    item.className = 'student-item';
+                    item.innerHTML = `
+                        <div class="student-name">${p.username}</div>
+                        <div class="student-controls">
+                            <button class="${p.is_mic_on ? 'disable-mic' : 'enable-mic'}" onclick="controlStudent(${p.user_id}, 'mic', ${!p.is_mic_on})" title="${p.is_mic_on ? 'Disable Mic' : 'Enable Mic'}">
+                                <i class="fas fa-microphone${p.is_mic_on ? '' : '-slash'}"></i>
+                            </button>
+                            <button class="${p.is_camera_on ? 'disable-cam' : 'enable-cam'}" onclick="controlStudent(${p.user_id}, 'camera', ${!p.is_camera_on})" title="${p.is_camera_on ? 'Disable Camera' : 'Enable Camera'}">
+                                <i class="fas fa-video${p.is_camera_on ? '' : '-slash'}"></i>
+                            </button>
+                        </div>
+                    `;
+                    studentList.appendChild(item);
+                });
+            }
+        }
+    }
+    
+    async function controlStudent(targetUserId, type, enable) {
+        await fetch(`/courses/live-class/${currentRoom}/api/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'teacher_control',
+                target_user_id: targetUserId,
+                control_type: type,
+                control_action: enable ? 'enable' : 'disable'
+            })
+        });
+        refreshParticipants();
+    }
+    
+    async function refreshParticipants() {
+        try {
+            const response = await fetch(`/courses/live-class/${currentRoom}/api/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'get_participants' })
+            });
+            const data = await response.json();
+            if (data.status === 'success') updateParticipants(data.participants);
+        } catch(e) { console.error(e); }
+    }
+    
+    function startPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        pollingInterval = setInterval(refreshParticipants, 3000);
+    }
+    
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        if (message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message message-self';
+            msgDiv.innerHTML = `<div class="message-sender">You</div><div class="message-text">${escapeHtml(message)}</div>`;
+            chatMessages.appendChild(msgDiv);
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
+    
+    function escapeHtml(text) { return text.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    
+    async function init() {
+        await getLocalMedia();
+        await joinClass();
+    }
+    init();
+</script>
+{% endblock %}

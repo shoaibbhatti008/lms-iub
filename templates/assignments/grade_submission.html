@@ -2,85 +2,23 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0"><i class="fas fa-star me-2"></i>Grade Submission</h4>
-                </div>
-                <div class="card-body">
-                    <!-- Student Info -->
-                    <div class="alert alert-info">
-                        <h5>Student Information:</h5>
-                        <p><strong>Name:</strong> {{ submission.student.get_full_name|default:submission.student.username }}</p>
-                        <p><strong>Email:</strong> {{ submission.student.email }}</p>
-                        <p><strong>Assignment:</strong> {{ submission.assignment.title }}</p>
-                        <p><strong>Submitted on:</strong> {{ submission.submitted_at|date:"M d, Y H:i" }}</p>
-                        {% if submission.is_late %}
-                        <p class="text-danger"><strong>⚠️ Late Submission!</strong></p>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Student's Answer -->
-                    <div class="card mb-3">
-                        <div class="card-header bg-secondary text-white">
-                            <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Student's Answer</h6>
-                        </div>
-                        <div class="card-body">
-                            {% if submission.answer_text %}
-                            <p><strong>Text Answer:</strong></p>
-                            <div class="border rounded p-3 bg-light" style="max-height: 300px; overflow-y: auto;">
-                                {{ submission.answer_text|linebreaks }}
-                            </div>
-                            {% endif %}
-                            
-                            {% if submission.answer_file %}
-                            <p><strong>File Answer:</strong></p>
-                            <a href="{{ submission.answer_file.url }}" class="btn btn-outline-primary" download>
-                                <i class="fas fa-download me-1"></i>Download Answer File
-                            </a>
-                            {% endif %}
-                            
-                            {% if not submission.answer_text and not submission.answer_file %}
-                            <p class="text-danger">No answer provided!</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Grading Form -->
-                    <form method="post">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Marks <span class="text-danger">*</span></label>
-                            <input type="number" name="marks" class="form-control" value="{{ submission.marks }}" 
-                                   min="0" max="{{ submission.assignment.max_marks }}" required>
-                            <small class="text-muted">Maximum marks: {{ submission.assignment.max_marks }}</small>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Feedback</label>
-                            <textarea name="feedback" class="form-control" rows="4" 
-                                      placeholder="Provide feedback to student...">{{ submission.feedback }}</textarea>
-                            <small class="text-muted">Give constructive feedback to help student improve</small>
-                        </div>
-                        
-                        <div class="alert alert-success">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Once graded, student will be able to see their marks and feedback immediately.
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Save Grade
-                        </button>
-                        <a href="{% url 'assignment_detail' submission.assignment.id %}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left me-2"></i>Back to Assignment
-                        </a>
-                    </form>
-                </div>
-            </div>
+<div class="container"><div class="row justify-content-center"><div class="col-md-8">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+    
+    <div class="card">
+        <div class="card-header bg-primary text-white"><h4><i class="fas fa-star me-2"></i> Grade Submission</h4></div>
+        <div class="card-body">
+            <div class="alert alert-info"><h5>Student: {{ submission.student.get_full_name|default:submission.student.username }}</h5><p><strong>Assignment:</strong> {{ submission.assignment.title }}</p><p><strong>Submitted on:</strong> {{ submission.submitted_at|date:"M d, Y H:i" }}</p>{% if submission.is_late %}<p class="text-danger"><strong>⚠️ Late Submission!</strong></p>{% endif %}</div>
+            
+            <div class="card mb-3"><div class="card-header bg-secondary text-white"><h6>Student's Answer</h6></div><div class="card-body">{% if submission.answer_text %}<p><strong>Text Answer:</strong></p><div class="border rounded-3 p-3 bg-light">{{ submission.answer_text|linebreaks }}</div>{% endif %}{% if submission.answer_file %}<p><strong>File Answer:</strong></p><a href="{{ submission.answer_file.url }}" class="btn btn-outline-primary" download>Download File</a>{% endif %}{% if not submission.answer_text and not submission.answer_file %}<p class="text-danger">No answer provided!</p>{% endif %}</div></div>
+            
+            <form method="post">{% csrf_token %}
+                <div class="mb-3"><label class="form-label">Marks (Max: {{ submission.assignment.max_marks }})</label><input type="number" name="marks" class="form-control" value="{{ submission.marks }}" min="0" max="{{ submission.assignment.max_marks }}" required></div>
+                <div class="mb-3"><label class="form-label">Feedback</label><textarea name="feedback" class="form-control" rows="4" placeholder="Provide feedback to student...">{{ submission.feedback }}</textarea></div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i> Save Grade</button>
+                <a href="{% url 'assignment_detail' submission.assignment.id %}" class="btn btn-secondary">Back</a>
+            </form>
         </div>
     </div>
-</div>
+</div></div></div>
 {% endblock %}

@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load course_filters %}
+
+{% block content %}
+<div class="container">
+    <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Course</a>
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold"><i class="fas fa-chart-bar me-2" style="color: var(--accent);"></i> Attendance Report</h1>
+        <div>
+            <button onclick="window.print()" class="btn btn-primary"><i class="fas fa-print me-2"></i> Print Report</button>
+        </div>
+    </div>
+    
+    <!-- Course Info Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h3 class="mb-1">{{ course.title }}</h3>
+            <p class="text-muted">Course Code: {{ course.course_code }} | Teacher: {{ course.teacher.get_full_name|default:course.teacher.username }}</p>
+        </div>
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-number">{{ total_students }}</div>
+                <div class="stat-label">Total Students</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-icon"><i class="fas fa-video"></i></div>
+                <div class="stat-number">{{ total_lectures }}</div>
+                <div class="stat-label">Total Lectures</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-number">{{ attendance_data|length }}</div>
+                <div class="stat-label">Active Students</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card text-center">
+                <div class="stat-icon"><i class="fas fa-percent"></i></div>
+                <div class="stat-number">{% widthratio attendance_data|length total_students 100 %}%</div>
+                <div class="stat-label">Attendance Rate</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Attendance Table -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-table me-2"></i> Student-wise Attendance Details
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Student Name</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            {% for lecture in lectures %}
+                            <th class="text-center">L{{ forloop.counter }}</th>
+                            {% endfor %}
+                            <th class="text-center">Present</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center">%</th>
+                            <th class="text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in attendance_data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><strong>{{ data.student_name }}</strong></td>
+                            <td>{{ data.student_username }}</td>
+                            <td>{{ data.student_email }}</td>
+                            {% for lecture in lectures %}
+                            <td class="text-center">
+                                {% with status=data.lecture_status|get_item:lecture.id %}
+                                    {% if status == 'present' %}
+                                        <span class="badge bg-success">✓</span>
+                                    {% elif status == 'late' %}
+                                        <span class="badge bg-warning">⚠️</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">✗</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                            {% endfor %}
+                            <td class="text-center fw-bold">{{ data.present }}</td>
+                            <td class="text-center">{{ data.total }}</td>
+                            <td class="text-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px;">
+                                        <div class="progress-bar bg-{{ data.status_class }}" style="width: {{ data.percentage }}%"></div>
+                                    </div>
+                                    <span class="small">{{ data.percentage }}%</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-{{ data.status_class }}">{{ data.status }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="{{ lectures|length|add:7 }}" class="text-center py-5">
+                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                <p>No students enrolled in this course yet.</p>
+                                <a href="{% url 'enroll_student' course.id %}" class="btn btn-primary">Enroll Students</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Legend -->
+    <div class="row g-4 mt-2">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Status Legend</div>
+                <div class="card-body">
+                    <div class="d-flex gap-3 flex-wrap">
+                        <div><span class="badge bg-success">✓</span> Present</div>
+                        <div><span class="badge bg-warning">⚠️</span> Late</div>
+                        <div><span class="badge bg-danger">✗</span> Absent</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Performance Legend</div>
+                <div class="card-body">
+                    <div class="d-flex gap-3 flex-wrap">
+                        <div><span class="badge bg-success">Good</span> ≥75% Attendance</div>
+                        <div><span class="badge bg-warning">Average</span> 50-74% Attendance</div>
+                        <div><span class="badge bg-danger">Poor</span> {"<"}50% Attendance</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .navbar, .footer, .back-btn, .btn-primary, .container > .d-flex:first-child {
+            display: none !important;
+        }
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #ddd;
+        }
+    }
+</style>
+{% endblock %}

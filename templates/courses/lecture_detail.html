@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            
+            <div class="card mb-4">
+                <div class="ratio ratio-16x9 bg-dark">
+                    <iframe src="{{ lecture.get_embed_url }}" title="{{ lecture.title }}" allowfullscreen style="border: none;"></iframe>
+                </div>
+                <div class="card-body">
+                    <h3 class="fw-bold mb-1">{{ lecture.title }}</h3>
+                    <p class="text-muted">{{ lecture.course.title }}</p>
+                    <hr>
+                    <p>{{ lecture.description|linebreaks }}</p>
+                </div>
+            </div>
+            
+            {% if user.role == 'student' %}
+            <div class="card mb-4 bg-success bg-opacity-10 border-success">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <h5 class="text-success">Attendance Marked Successfully!</h5>
+                    <p class="text-muted mb-0">Your attendance has been recorded for this lecture.</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if user.role == 'teacher' or user.role == 'admin' %}
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-users me-2"></i> Attendance Statistics
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="p-4">
+                                <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                                <h2 class="fw-bold mb-0">{{ attendance_count }}</h2>
+                                <p class="text-muted">Students Present</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-4">
+                                <i class="fas fa-users fa-3x text-primary mb-2"></i>
+                                <h2 class="fw-bold mb-0">{{ lecture.course.students.count }}</h2>
+                                <p class="text-muted">Total Students</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

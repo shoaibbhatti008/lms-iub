@@ -2,212 +2,422 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left me-2"></i> Back to Courses
+        </a>
+    </div>
+    
     <!-- Course Header -->
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">{{ course.title }}</h3>
-            <p class="mb-0">Course Code: {{ course.course_code }}</p>
-        </div>
-        <div class="card-body">
-            <p>{{ course.description }}</p>
-            <hr>
-            <p><strong>Teacher:</strong> 
-                {% if course.teacher.first_name %}
-                    {{ course.teacher.first_name }} {{ course.teacher.last_name }}
-                {% else %}
-                    {{ course.teacher.username }}
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-header" style="background: linear-gradient(135deg, #4f46e5, #4338ca); color: white; border-radius: 12px 12px 0 0;">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h3 class="fw-bold mb-1">{{ course.title }}</h3>
+                    <p class="mb-0 opacity-75">Code: {{ course.course_code }}</p>
+                </div>
+                {% if user.role == 'admin' %}
+                <a href="{% url 'delete_course' course.id %}" class="btn btn-outline-light btn-sm mt-2 mt-sm-0" onclick="return confirm('Delete this course?')">
+                    <i class="fas fa-trash me-1"></i> Delete
+                </a>
                 {% endif %}
-            </p>
-            <p><strong>Total Students:</strong> {{ course.students.count }}</p>
-        </div>
-    </div>
-    
-    <!-- Admin/Teacher Buttons -->
-    {% if user.role == 'admin' or user.role == 'teacher' %}
-    <div class="row mb-4">
-        {% if user.role == 'admin' %}
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-user-graduate fa-2x mb-2 text-info"></i>
-                    <h5>Enroll Students</h5>
-                    <a href="{% url 'enroll_student' course.id %}" class="btn btn-info btn-sm">
-                        <i class="fas fa-plus me-1"></i>Enroll
-                    </a>
-                </div>
             </div>
-        </div>
-        {% endif %}
-        
-        {% if user.role == 'teacher' and course.teacher == user %}
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-upload fa-2x mb-2 text-primary"></i>
-                    <h5>Upload Content</h5>
-                    <a href="{% url 'upload_content' course.id %}" class="btn btn-primary btn-sm">Upload</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-tasks fa-2x mb-2 text-success"></i>
-                    <h5>Create Assignment</h5>
-                    <a href="{% url 'create_assignment' course.id %}" class="btn btn-success btn-sm">Create</a>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        
-        <!-- ANNOUNCEMENT BUTTON - FOR BOTH TEACHER AND ADMIN -->
-        <div class="col-md-3">
-            <div class="card text-center">
-                <div class="card-body">
-                    <i class="fas fa-bullhorn fa-2x mb-2 text-warning"></i>
-                    <h5>Announcements</h5>
-                    <a href="{% url 'course_announcements' course.id %}" class="btn btn-warning btn-sm">
-                        <i class="fas fa-eye me-1"></i>View All
-                    </a>
-                    {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
-                    <a href="{% url 'create_announcement' course.id %}" class="btn btn-info btn-sm mt-1">
-                        <i class="fas fa-plus me-1"></i>Create
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Enrolled Students List for Admin -->
-    {% if user.role == 'admin' %}
-    <div class="card mb-4">
-        <div class="card-header bg-info text-white">
-            <h5 class="mb-0"><i class="fas fa-users me-2"></i>Enrolled Students ({{ course.students.count }})</h5>
         </div>
         <div class="card-body">
+            <p class="mb-3">{{ course.description }}</p>
+            <hr>
             <div class="row">
-                {% for student in course.students.all %}
-                <div class="col-md-3 mb-2">
-                    <div class="d-flex justify-content-between align-items-center p-2 border rounded">
-                        <span>
-                            <i class="fas fa-user-graduate me-1"></i>
-                            {{ student.username }}
-                        </span>
-                        <a href="{% url 'remove_student' course.id student.id %}" 
-                           class="btn btn-danger btn-sm"
-                           onclick="return confirm('Remove this student?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </div>
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <i class="fas fa-chalkboard-user me-2" style="color: #4f46e5;"></i> 
+                    <strong>Teacher:</strong> {{ course.teacher.get_full_name|default:course.teacher.username|default:"Not assigned" }}
                 </div>
-                {% empty %}
-                <div class="col-12">
-                    <p class="text-muted">No students enrolled yet.</p>
-                    <a href="{% url 'enroll_student' course.id %}" class="btn btn-info btn-sm">
-                        <i class="fas fa-plus me-1"></i>Enroll Students
-                    </a>
+                <div class="col-md-6">
+                    <i class="fas fa-users me-2" style="color: #4f46e5;"></i> 
+                    <strong>Students:</strong> {{ course.students.count }}
                 </div>
-                {% endfor %}
             </div>
         </div>
     </div>
-    {% endif %}
     
-    <!-- Course Content and Assignments -->
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Course Content</h5>
-                </div>
-                <div class="card-body">
-                    {% for content in contents %}
-                    <div class="mb-3 p-2 border rounded">
-                        <h6>{{ content.title }}</h6>
-                        <small class="text-muted">Uploaded: {{ content.uploaded_at|date }}</small>
-                        {% if content.content_type == 'file' and content.file %}
-                        <div><a href="{{ content.file.url }}" class="btn btn-sm btn-outline-primary mt-2">Download</a></div>
-                        {% elif content.content_type == 'link' and content.link_url %}
-                        <div><a href="{{ content.link_url }}" target="_blank" class="btn btn-sm btn-outline-primary mt-2">Open Link</a></div>
-                        {% elif content.text_content %}
-                        <p class="mt-2">{{ content.text_content }}</p>
-                        {% endif %}
+    <!-- Action Buttons Row - Organized & Responsive -->
+    <div class="row g-3 mb-5">
+        <!-- Admin Only -->
+        {% if user.role == 'admin' %}
+        <div class="col-6 col-md-2">
+            <a href="{% url 'enroll_student' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="action-icon purple mx-auto mb-2">
+                            <i class="fas fa-user-plus fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold">Enroll</h6>
                     </div>
-                    {% empty %}
-                    <p class="text-muted">No content uploaded yet.</p>
-                    {% endfor %}
                 </div>
-            </div>
+            </a>
+        </div>
+        {% endif %}
+        
+        <!-- Teacher & Admin Actions -->
+        {% if user.role == 'teacher' and course.teacher == user or user.role == 'admin' %}
+        <div class="col-6 col-md-2">
+            <a href="{% url 'upload_content' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="action-icon blue mx-auto mb-2">
+                            <i class="fas fa-upload fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold">Upload</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a href="{% url 'create_assignment' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="action-icon green mx-auto mb-2">
+                            <i class="fas fa-plus-circle fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold">Assignment</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a href="{% url 'create_lecture' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="action-icon indigo mx-auto mb-2">
+                            <i class="fas fa-video fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold">Video</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a href="{% url 'create_announcement' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm" style="border: 2px solid #f59e0b !important;">
+                    <div class="card-body py-3">
+                        <div class="action-icon orange mx-auto mb-2">
+                            <i class="fas fa-bullhorn fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold">Announce</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a href="{% url 'create_live_class' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="action-icon teal mx-auto mb-2">
+                            <i class="fas fa-chalkboard fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold">Live</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+        
+        <!-- View Announcements Button -->
+        <div class="col-6 col-md-2">
+            <a href="{% url 'course_announcements' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm">
+                    <div class="card-body py-3">
+                        <div class="action-icon gray mx-auto mb-2">
+                            <i class="fas fa-list-alt fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold">All</h6>
+                    </div>
+                </div>
+            </a>
         </div>
         
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Assignments</h5>
-                </div>
-                <div class="card-body">
-                    {% for assignment in assignments %}
-                    <div class="mb-3 p-2 border rounded">
-                        <h6>{{ assignment.title }}</h6>
-                        <p class="small">{{ assignment.description|truncatewords:20 }}</p>
-                        <p><strong>Deadline:</strong> {{ assignment.deadline|date:"M d, Y H:i" }}</p>
-                        <p><strong>Max Marks:</strong> {{ assignment.max_marks }}</p>
-                        
-                        {% if assignment.attachment %}
-                        <p><strong>Attachment:</strong> 
-                            <a href="{{ assignment.attachment.url }}" class="btn btn-sm btn-outline-info" download>Download</a>
-                        </p>
-                        {% endif %}
-                        
-                        <a href="{% url 'assignment_detail' assignment.id %}" class="btn btn-primary btn-sm">View Details</a>
+        <!-- Lecture Attendance Button -->
+        <div class="col-6 col-md-2">
+            <a href="{% url 'lecture_attendance' course.id %}" class="text-decoration-none">
+                <div class="card text-center h-100 border-0 shadow-sm" style="border: 2px solid #4f46e5 !important;">
+                    <div class="card-body py-3">
+                        <div class="action-icon purple mx-auto mb-2">
+                            <i class="fas fa-chart-line fa-lg"></i>
+                        </div>
+                        <h6 class="mb-0 small fw-semibold" style="color: #4f46e5;">Attendance</h6>
                     </div>
-                    {% empty %}
-                    <p class="text-muted">No assignments yet.</p>
-                    {% if user.role == 'teacher' and course.teacher == user %}
-                    <a href="{% url 'create_assignment' course.id %}" class="btn btn-success">Create First Assignment</a>
-                    {% endif %}
-                    {% endfor %}
                 </div>
-            </div>
+            </a>
         </div>
     </div>
     
     <!-- Recent Announcements Section -->
-    <div class="card mb-4">
-        <div class="card-header bg-warning">
-            <h5 class="mb-0"><i class="fas fa-bullhorn me-2"></i>Recent Announcements</h5>
+    <div class="card mb-5 border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap border-bottom">
+            <div>
+                <i class="fas fa-bullhorn me-2" style="color: #f59e0b;"></i>
+                <span class="fw-semibold">Recent Announcements</span>
+            </div>
+            <a href="{% url 'course_announcements' course.id %}" class="btn btn-sm btn-outline-primary mt-2 mt-sm-0">View All <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
         <div class="card-body">
-            {% with announcements=course.announcements.all|slice:":3" %}
-                {% if announcements %}
-                    {% for announcement in announcements %}
-                    <div class="mb-2 p-2 border-start border-3 
-                        {% if announcement.priority == 'urgent' %}border-danger
-                        {% elif announcement.priority == 'important' %}border-warning
-                        {% else %}border-info{% endif %} bg-light">
-                        <div class="d-flex justify-content-between">
-                            <strong>
-                                {% if announcement.priority == 'urgent' %}🔥
-                                {% elif announcement.priority == 'important' %}⚠️
-                                {% else %}📢{% endif %}
-                                {{ announcement.title }}
-                            </strong>
-                            <small>{{ announcement.created_at|date:"M d" }}</small>
-                        </div>
-                        <p class="small mb-0">{{ announcement.content|truncatewords:15 }}</p>
+            {% if announcements %}
+                {% for announcement in announcements %}
+                <div class="border-bottom pb-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <strong>{{ announcement.title }}</strong>
+                        <small class="text-muted">{{ announcement.created_at|date:"M d, H:i" }}</small>
                     </div>
-                    {% endfor %}
-                    <div class="text-center mt-2">
-                        <a href="{% url 'course_announcements' course.id %}" class="btn btn-sm btn-warning">View All Announcements</a>
-                    </div>
-                {% else %}
-                    <p class="text-muted text-center mb-0">No announcements yet.</p>
-                {% endif %}
-            {% endwith %}
+                    <p class="small text-muted mt-1 mb-0">{{ announcement.content|truncatewords:25 }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-bullhorn fa-2x mb-2 d-block opacity-50"></i>
+                    <p class="mb-0">No announcements yet</p>
+                </div>
+            {% endif %}
         </div>
     </div>
+    
+    <!-- Two Column Layout - Course Content & Assignments -->
+    <div class="row g-4 mb-5">
+        <!-- Left Column: Course Content -->
+        <div class="col-12 col-lg-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <i class="fas fa-file-alt me-2" style="color: #4f46e5;"></i>
+                    <span class="fw-semibold">Course Content</span>
+                    <span class="badge bg-secondary ms-2">{{ contents|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if contents %}
+                        {% for content in contents %}
+                        <div class="d-flex justify-content-between align-items-center p-3 mb-2 border rounded-3">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">{{ content.title }}</h6>
+                                <small class="text-muted">{{ content.uploaded_at|date:"M d, Y" }}</small>
+                            </div>
+                            <div class="ms-2">
+                                {% if content.file %}
+                                    <a href="{{ content.file.url }}" class="btn btn-sm btn-outline-primary" download title="Download">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                {% endif %}
+                                {% if content.link_url %}
+                                    <a href="{{ content.link_url }}" target="_blank" class="btn btn-sm btn-outline-primary" title="Open Link">
+                                        <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                {% endif %}
+                                {% if user.role == 'admin' or content.uploaded_by == user %}
+                                    <a href="{% url 'delete_content' content.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this content?')" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-folder-open fa-3x mb-3 d-block opacity-50"></i>
+                            <p class="mb-0">No content uploaded yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Assignments -->
+        <div class="col-12 col-lg-6">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <i class="fas fa-tasks me-2" style="color: #4f46e5;"></i>
+                    <span class="fw-semibold">Assignments</span>
+                    <span class="badge bg-secondary ms-2">{{ assignments|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if assignments %}
+                        {% for assignment in assignments %}
+                        <div class="p-3 mb-2 border rounded-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h6 class="mb-1">{{ assignment.title }}</h6>
+                                {% if user.role == 'admin' or assignment.created_by == user %}
+                                    <a href="{% url 'delete_assignment' assignment.id %}" class="text-danger" onclick="return confirm('Delete this assignment?')" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted d-block mb-2"><i class="far fa-calendar-alt me-1"></i> Due: {{ assignment.deadline|date:"M d, Y H:i" }}</small>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="badge bg-primary">Max: {{ assignment.max_marks }}</span>
+                                <a href="{% url 'assignment_detail' assignment.id %}" class="btn btn-sm btn-primary">View <i class="fas fa-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-inbox fa-3x mb-3 d-block opacity-50"></i>
+                            <p class="mb-0">No assignments yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Video Lectures Section -->
+    {% if lectures %}
+    <div class="card mb-5 border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap border-bottom">
+            <div>
+                <i class="fas fa-video me-2" style="color: #4f46e5;"></i>
+                <span class="fw-semibold">Video Lectures</span>
+                <span class="badge bg-secondary ms-2">{{ lectures.count }}</span>
+            </div>
+            <a href="{% url 'lecture_list' course.id %}" class="btn btn-sm btn-outline-primary mt-2 mt-sm-0">View All <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                {% for lecture in lectures|slice:":3" %}
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="border rounded-3 p-2 h-100">
+                        <div class="ratio ratio-16x9 mb-2 bg-dark rounded overflow-hidden">
+                            <iframe src="{{ lecture.get_embed_url }}" title="{{ lecture.title }}" allowfullscreen style="border: none;"></iframe>
+                        </div>
+                        <h6 class="mb-1">{{ lecture.title|truncatechars:35 }}</h6>
+                        <small class="text-muted"><i class="far fa-clock me-1"></i> {{ lecture.duration|default:"30:00" }} mins</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if lectures|length > 3 %}
+            <div class="text-center mt-4">
+                <a href="{% url 'lecture_list' course.id %}" class="btn btn-outline-primary">View All {{ lectures.count }} Lectures <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Live Classes Section -->
+    {% if live_classes %}
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap border-bottom">
+            <div>
+                <i class="fas fa-chalkboard me-2" style="color: #10b981;"></i>
+                <span class="fw-semibold">Live Classes</span>
+                <span class="badge bg-secondary ms-2">{{ live_classes.count }}</span>
+            </div>
+            <a href="{% url 'live_class_list' course.id %}" class="btn btn-sm btn-outline-primary mt-2 mt-sm-0">View All <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                {% for live_class in live_classes|slice:":3" %}
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <h6 class="mb-1">{{ live_class.title|truncatechars:30 }}</h6>
+                        <small class="text-muted d-block mb-2">
+                            <i class="far fa-calendar-alt me-1"></i> {{ live_class.start_time|date:"M d, Y H:i" }}
+                        </small>
+                        {% if live_class.status == 'ongoing' %}
+                            <span class="badge bg-success mb-2 d-inline-block">Live Now</span>
+                            <a href="{% url 'live_class_room' live_class.meeting_link %}" class="btn btn-sm btn-primary w-100 mt-2">Join <i class="fas fa-arrow-right ms-1"></i></a>
+                        {% elif live_class.status == 'scheduled' %}
+                            <span class="badge bg-warning mb-2 d-inline-block">Scheduled</span>
+                            <button class="btn btn-sm btn-secondary w-100 mt-2" disabled><i class="fas fa-clock me-1"></i> {{ live_class.start_time|date:"H:i" }}</button>
+                        {% else %}
+                            <span class="badge bg-secondary mb-2 d-inline-block">Completed</span>
+                            <a href="{% url 'live_class_attendance_detail' course.id live_class.id %}" class="btn btn-sm btn-outline w-100 mt-2">Attendance</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if live_classes|length > 3 %}
+            <div class="text-center mt-4">
+                <a href="{% url 'live_class_list' course.id %}" class="btn btn-outline-primary">View All {{ live_classes.count }} Live Classes <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
+
+<style>
+    /* Back Button */
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #64748b;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .back-btn:hover {
+        color: #4f46e5;
+        transform: translateX(-4px);
+    }
+    
+    /* Action Icons */
+    .action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    .action-icon.purple { background: #eef2ff; color: #4f46e5; }
+    .action-icon.blue { background: #e0f2fe; color: #0284c7; }
+    .action-icon.green { background: #d1fae5; color: #059669; }
+    .action-icon.indigo { background: #e0e7ff; color: #4f46e5; }
+    .action-icon.orange { background: #ffedd5; color: #ea580c; }
+    .action-icon.teal { background: #ccfbf1; color: #0d9488; }
+    .action-icon.gray { background: #f1f5f9; color: #475569; }
+    
+    /* Cards */
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    /* Responsive */
+    @media (max-width: 576px) {
+        .card-body {
+            padding: 0.75rem;
+        }
+        h6 {
+            font-size: 0.7rem;
+        }
+        .small {
+            font-size: 0.65rem;
+        }
+        .btn-sm {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.65rem;
+        }
+        .badge {
+            font-size: 0.6rem;
+        }
+        .action-icon {
+            width: 40px;
+            height: 40px;
+        }
+        .action-icon i {
+            font-size: 1rem;
+        }
+    }
+    
+    @media (min-width: 768px) {
+        .fa-md-2x {
+            font-size: 1.8rem;
+        }
+    }
+</style>
 {% endblock %}

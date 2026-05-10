@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <!-- Back Button -->
+    <a href="javascript:history.back()" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <h1 class="fw-bold" style="font-size: 1.75rem;">
+            <i class="fas fa-video me-2" style="color: var(--accent);"></i> All Video Lectures
+        </h1>
+        <span class="badge bg-primary">{{ total_lectures }} Lectures Available</span>
+    </div>
+    
+    <!-- Progress Section for Students -->
+    {% if user.role == 'student' and total_lectures > 0 %}
+    <div class="card mb-4 bg-light border-0">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h6 class="mb-2">Your Learning Progress</h6>
+                    <div class="progress" style="height: 12px; border-radius: 10px;">
+                        <div class="progress-bar bg-success" style="width: {{ progress_percentage }}%; border-radius: 10px;"></div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <span class="fw-bold fs-4">{{ progress_percentage }}%</span>
+                    <span class="text-muted ms-1">Complete</span>
+                    <p class="small text-muted mb-0">{{ watched_count }} of {{ total_lectures }} lectures watched</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Lectures Grid -->
+    <div class="row g-4">
+        {% for lecture in lectures %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="position-relative">
+                    <!-- Video Thumbnail -->
+                    <div class="ratio ratio-16x9 bg-dark rounded-top">
+                        <iframe src="{{ lecture.get_embed_url }}?autoplay=0" 
+                                title="{{ lecture.title }}" 
+                                allowfullscreen 
+                                style="border: none; border-radius: 12px 12px 0 0;">
+                        </iframe>
+                    </div>
+                    <!-- Duration Badge -->
+                    <span class="badge bg-dark position-absolute bottom-0 end-0 m-2 opacity-75">
+                        <i class="fas fa-clock me-1"></i> {{ lecture.duration|default:"30:00" }}
+                    </span>
+                    <!-- Course Badge -->
+                    <span class="badge bg-primary position-absolute top-0 start-0 m-2">
+                        {{ lecture.course.course_code }}
+                    </span>
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="card-title mb-2">{{ lecture.title|truncatechars:50 }}</h5>
+                    <p class="card-text small text-muted mb-2">
+                        <i class="fas fa-chalkboard-user me-1"></i> {{ lecture.course.title|truncatechars:35 }}
+                    </p>
+                    <p class="card-text small text-muted">{{ lecture.description|truncatewords:12 }}</p>
+                    
+                    <!-- Status Badge for Students -->
+                    {% if user.role == 'student' %}
+                        <div class="mt-2">
+                            {% if lecture.id in attended_lectures %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i> Completed
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="fas fa-clock me-1"></i> Not Watched Yet
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-white border-0 pb-3 pt-0">
+                    <a href="{% url 'lecture_detail' lecture.course.id lecture.id %}" class="btn btn-primary w-100">
+                        {% if user.role == 'student' and lecture.id not in attended_lectures %}
+                            <i class="fas fa-play-circle me-2"></i> Watch & Complete
+                        {% else %}
+                            <i class="fas fa-play me-2"></i> Watch Lecture
+                        {% endif %}
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-video fa-4x text-muted mb-3"></i>
+                <h4>No Lectures Available</h4>
+                <p class="text-muted">No video lectures have been added to your courses yet.</p>
+                {% if user.role == 'teacher' %}
+                <a href="{% url 'course_list' %}" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus me-2"></i> Add Lectures to Your Courses
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    }
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+    .btn-primary {
+        transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+    }
+</style>
+{% endblock %}

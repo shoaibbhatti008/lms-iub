@@ -2,26 +2,27 @@
 {% load static %}
 
 {% block content %}
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h4 class="mb-0"><i class="fas fa-bullhorn me-2"></i>Create Announcement</h4>
-                    <small>Course: {{ course.title }}</small>
+            <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-bullhorn me-2"></i> Post Announcement - {{ course.title }}
                 </div>
                 <div class="card-body">
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label class="form-label">Title</label>
-                            <input type="text" name="title" class="form-control" required placeholder="e.g., Exam Date Changed">
+                            <label class="form-label">Title <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control" required placeholder="Enter announcement title">
                         </div>
                         
                         <div class="mb-3">
                             <label class="form-label">Priority</label>
-                            <select name="priority" class="form-control">
+                            <select name="priority" class="form-select">
                                 <option value="normal">📢 Normal</option>
                                 <option value="important">⚠️ Important</option>
                                 <option value="urgent">🔥 Urgent</option>
@@ -29,21 +30,24 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Content</label>
-                            <textarea name="content" class="form-control" rows="6" required placeholder="Write your announcement here..."></textarea>
+                            <label class="form-label">Content <span class="text-danger">*</span></label>
+                            <textarea name="content" class="form-control" rows="6" required placeholder="Write announcement here..."></textarea>
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label">Attach File (Optional)</label>
+                            <label class="form-label">Attachment (Optional)</label>
                             <input type="file" name="attachment" class="form-control">
                         </div>
                         
-                        <button type="submit" class="btn btn-info">
-                            <i class="fas fa-paper-plane me-2"></i>Post Announcement
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            This announcement will be visible to all enrolled students.
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i> Post Announcement
                         </button>
-                        <a href="{% url 'course_announcements' course.id %}" class="btn btn-secondary">
-                            <i class="fas fa-times me-2"></i>Cancel
-                        </a>
+                        <a href="{% url 'course_announcements' course.id %}" class="btn btn-secondary ms-2">Cancel</a>
                     </form>
                 </div>
             </div>
